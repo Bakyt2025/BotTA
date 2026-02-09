@@ -6,62 +6,77 @@
     <title>Заказ товаров</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 15px; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--tg-theme-bg-color, #ffffff); 
+            color: var(--tg-theme-text-color, #000000); 
+            margin: 0; 
+            padding: 15px; 
+        }
         
         .item { 
             display: flex; 
             align-items: center; 
-            border-bottom: 1px solid #ccc; 
-            padding: 10px 0; 
+            border-bottom: 1px solid rgba(0,0,0,0.1); 
+            padding: 12px 0; 
             gap: 15px;
         }
 
-        /* Стиль для картинки */
         .product-img {
-            width: 60px;
-            height: 60px;
+            width: 65px;
+            height: 65px;
             object-fit: cover;
-            border-radius: 8px;
-            background-color: #eee; /* фон, пока грузится фото */
+            border-radius: 12px;
+            background-color: #f0f0f0;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .info { flex-grow: 1; }
-        .name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
-        .price { font-size: 13px; color: #888; }
+        .name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+        .price { font-size: 14px; color: #3390ec; font-weight: 500; }
 
-        .controls { display: flex; align-items: center; gap: 10px; }
-        button { 
-            padding: 8px 12px; 
+        .controls { display: flex; align-items: center; gap: 12px; }
+        
+        button.btn-ctrl { 
+            width: 32px;
+            height: 32px;
             border: none; 
-            border-radius: 6px; 
+            border-radius: 50%; 
             background: #3390ec; 
             color: white; 
+            font-size: 20px;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
         
-        .count { font-weight: bold; min-width: 20px; text-align: center; }
+        .count { font-weight: 700; min-width: 20px; text-align: center; font-size: 16px; }
         
         #send-btn { 
             position: fixed;
             bottom: 20px;
             left: 15px;
             right: 15px;
-            padding: 15px; 
+            padding: 16px; 
             background: #31b545; 
             color: white; 
             border: none; 
-            border-radius: 10px; 
-            font-size: 18px; 
-            font-weight: bold;
+            border-radius: 12px; 
+            font-size: 17px; 
+            font-weight: 600;
             display: none; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(49, 181, 69, 0.3);
+            z-index: 100;
         }
         
-        /* Чтобы контент не перекрывался кнопкой внизу */
-        #catalog { padding-bottom: 80px; }
+        #catalog { padding-bottom: 100px; }
+        h2 { font-size: 20px; margin-top: 0; margin-bottom: 20px; }
     </style>
 </head>
 <body>
+    <h2>📦 Выберите товары</h2>
     <div id="catalog">
         <!-- Товары добавятся сюда -->
     </div>
@@ -71,13 +86,12 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Добавляем ссылки на картинки (URL или путь внутри GitHub)
-        // Если картинки нет, можно использовать заглушку https://via.placeholder.com/60
+        // Данные товаров с твоими именами файлов из папки img
         const products = [
-            { name: "70 метров", price: 18.5, img: "https://via.placeholder.com/60" },
-            { name: "Семейная", price: 18, img: "https://via.placeholder.com/60" },
-            { name: "Эконом", price: 8.5, img: "https://via.placeholder.com/60" },
-            { name: "Формула", price: 15, img: "https://via.placeholder.com/60" }
+            { name: "70 метров", price: 18.5, img: "img/70m.png" },
+            { name: "Семейная", price: 18, img: "img/sem.png" },
+            { name: "Эконом", price: 8.5, img: "img/ekom.png" },
+            { name: "Формула", price: 15, img: "img/form.png" }
         ];
 
         let cart = {};
@@ -87,15 +101,15 @@
             const div = document.createElement('div');
             div.className = 'item';
             div.innerHTML = `
-                <img src="${p.img}" class="product-img" alt="${p.name}">
+                <img src="${p.img}" class="product-img" alt="${p.name}" onerror="this.src='https://via.placeholder.com/65?text=No+Img'">
                 <div class="info">
                     <div class="name">${p.name}</div>
                     <div class="price">${p.price} сом</div>
                 </div>
                 <div class="controls">
-                    <button onclick="change('${p.name}', -1)">-</button>
+                    <button class="btn-ctrl" onclick="change('${p.name}', -1)">-</button>
                     <span class="count" id="count-${p.name}">0</span>
-                    <button onclick="change('${p.name}', 1)">+</button>
+                    <button class="btn-ctrl" onclick="change('${p.name}', 1)">+</button>
                 </div>
             `;
             catalogDiv.appendChild(div);
@@ -108,13 +122,25 @@
             
             const hasItems = Object.values(cart).some(c => c > 0);
             document.getElementById('send-btn').style.display = hasItems ? 'block' : 'none';
+            
+            // Если есть товары, показываем итоговую сумму на кнопке
+            if (hasItems) {
+                let total = 0;
+                products.forEach(p => {
+                    if (cart[p.name]) total += cart[p.name] * p.price;
+                });
+                document.getElementById('send-btn').innerText = `Заказать на ${total.toFixed(2)} сом`;
+            }
         }
 
         document.getElementById('send-btn').addEventListener('click', () => {
             let orderItems = [];
             for (let name in cart) {
-                if (cart[name] > 0) orderItems.push({ name: name, quantity: cart[name] });
+                if (cart[name] > 0) {
+                    orderItems.push({ name: name, quantity: cart[name] });
+                }
             }
+            // Отправляем данные боту
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
