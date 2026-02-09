@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заказ товаров</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 15px; }
+        .item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding: 10px 0; }
+        .controls { display: flex; align-items: center; gap: 10px; }
+        button { padding: 5px 10px; border: none; border-radius: 5px; background: #3390ec; color: white; cursor: pointer; }
+        .count { font-weight: bold; width: 20px; text-align: center; }
+        #send-btn { width: 100%; padding: 15px; background: #31b545; color: white; border: none; border-radius: 10px; font-size: 18px; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <h2>📦 Каталог товаров</h2>
+    <div id="catalog">
+        <!-- Товары добавятся сюда через JS -->
+    </div>
+    <button id="send-btn">Оформить заказ</button>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Развернуть на весь экран
+
+        // Список товаров (в идеале грузить из твоей таблицы через API, но для демо впишем сюда)
+        const products = [
+            { name: "70 метров", price: 18.5 },
+            { name: "Семейная", price: 18 },
+            { name: "Эконом", price: 8.5 },
+            { name: "Формула", price: 15 }
+        ];
+
+        let cart = {};
+
+        const catalogDiv = document.getElementById('catalog');
+        products.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <div>
+                    <div>${p.name}</div>
+                    <small>${p.price} </small>
+                </div>
+                <div class="controls">
+                    <button onclick="change('${p.name}', -1)">-</button>
+                    <span class="count" id="count-${p.name}">0</span>
+                    <button onclick="change('${p.name}', 1)">+</button>
+                </div>
+            `;
+            catalogDiv.appendChild(div);
+        });
+
+        function change(name, delta) {
+            cart[name] = (cart[name] || 0) + delta;
+            if (cart[name] < 0) cart[name] = 0;
+            document.getElementById(`count-${name}`).innerText = cart[name];
+            
+            // Показываем кнопку оформления, если в корзине что-то есть
+            const hasItems = Object.values(cart).some(c => c > 0);
+            document.getElementById('send-btn').style.display = hasItems ? 'block' : 'none';
+        }
+
+        document.getElementById('send-btn').addEventListener('click', () => {
+            let orderItems = [];
+            for (let name in cart) {
+                if (cart[name] > 0) orderItems.push({ name: name, quantity: cart[name] });
+            }
+            
+            // ОТПРАВКА ДАННЫХ БОТУ
+            tg.sendData(JSON.stringify({
+                customer: "Через WebApp",
+                items: orderItems
+            }));
+            tg.close();
+        });
+    </script>
+</body>
+</html>
