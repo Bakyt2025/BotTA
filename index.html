@@ -7,30 +7,77 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); margin: 0; padding: 15px; }
-        .item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding: 10px 0; }
+        
+        .item { 
+            display: flex; 
+            align-items: center; 
+            border-bottom: 1px solid #ccc; 
+            padding: 10px 0; 
+            gap: 15px;
+        }
+
+        /* Стиль для картинки */
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #eee; /* фон, пока грузится фото */
+        }
+
+        .info { flex-grow: 1; }
+        .name { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+        .price { font-size: 13px; color: #888; }
+
         .controls { display: flex; align-items: center; gap: 10px; }
-        button { padding: 5px 10px; border: none; border-radius: 5px; background: #3390ec; color: white; cursor: pointer; }
-        .count { font-weight: bold; width: 20px; text-align: center; }
-        #send-btn { width: 100%; padding: 15px; background: #31b545; color: white; border: none; border-radius: 10px; font-size: 18px; margin-top: 20px; display: none; }
+        button { 
+            padding: 8px 12px; 
+            border: none; 
+            border-radius: 6px; 
+            background: #3390ec; 
+            color: white; 
+            font-weight: bold;
+        }
+        
+        .count { font-weight: bold; min-width: 20px; text-align: center; }
+        
+        #send-btn { 
+            position: fixed;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            padding: 15px; 
+            background: #31b545; 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 18px; 
+            font-weight: bold;
+            display: none; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Чтобы контент не перекрывался кнопкой внизу */
+        #catalog { padding-bottom: 80px; }
     </style>
 </head>
 <body>
-    <h2>📦 Каталог товаров</h2>
     <div id="catalog">
-        <!-- Товары добавятся сюда через JS -->
+        <!-- Товары добавятся сюда -->
     </div>
     <button id="send-btn">Оформить заказ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на весь экран
+        tg.expand();
 
-        // Список товаров (в идеале грузить из твоей таблицы через API, но для демо впишем сюда)
+        // Добавляем ссылки на картинки (URL или путь внутри GitHub)
+        // Если картинки нет, можно использовать заглушку https://via.placeholder.com/60
         const products = [
-            { name: "70 метров", price: 18.5 },
-            { name: "Семейная", price: 18 },
-            { name: "Эконом", price: 8.5 },
-            { name: "Формула", price: 15 }
+            { name: "70 метров", price: 18.5, img: "https://via.placeholder.com/60" },
+            { name: "Семейная", price: 18, img: "https://via.placeholder.com/60" },
+            { name: "Эконом", price: 8.5, img: "https://via.placeholder.com/60" },
+            { name: "Формула", price: 15, img: "https://via.placeholder.com/60" }
         ];
 
         let cart = {};
@@ -40,9 +87,10 @@
             const div = document.createElement('div');
             div.className = 'item';
             div.innerHTML = `
-                <div>
-                    <div>${p.name}</div>
-                    <small>${p.price} </small>
+                <img src="${p.img}" class="product-img" alt="${p.name}">
+                <div class="info">
+                    <div class="name">${p.name}</div>
+                    <div class="price">${p.price} сом</div>
                 </div>
                 <div class="controls">
                     <button onclick="change('${p.name}', -1)">-</button>
@@ -58,7 +106,6 @@
             if (cart[name] < 0) cart[name] = 0;
             document.getElementById(`count-${name}`).innerText = cart[name];
             
-            // Показываем кнопку оформления, если в корзине что-то есть
             const hasItems = Object.values(cart).some(c => c > 0);
             document.getElementById('send-btn').style.display = hasItems ? 'block' : 'none';
         }
@@ -68,12 +115,7 @@
             for (let name in cart) {
                 if (cart[name] > 0) orderItems.push({ name: name, quantity: cart[name] });
             }
-            
-            // ОТПРАВКА ДАННЫХ БОТУ
-            tg.sendData(JSON.stringify({
-                customer: "Через WebApp",
-                items: orderItems
-            }));
+            tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
     </script>
