@@ -13,7 +13,7 @@
             margin: 0;
             padding: 15px;
         }
-       
+      
         .item {
             display: flex;
             align-items: center;
@@ -21,37 +21,37 @@
             padding: 16px 0;
             gap: 15px;
         }
-       
-        .info { 
-            flex-grow: 1; 
+      
+        .info {
+            flex-grow: 1;
         }
-       
-        .name { 
-            font-weight: 600; 
-            font-size: 16px; 
-            margin-bottom: 4px; 
+      
+        .name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
         }
-       
-        .price { 
-            font-size: 15px; 
-            color: #3390ec; 
-            font-weight: 500; 
+      
+        .price {
+            font-size: 15px;
+            color: #3390ec;
+            font-weight: 500;
         }
-       
-        .controls { 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
+      
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
         }
-       
+      
         button.btn-ctrl {
             width: 36px;
             height: 36px;
             border: none;
             border-radius: 50%;
-            background: #3390ec;
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -59,14 +59,24 @@
             cursor: pointer;
             touch-action: manipulation;
         }
-       
-        .count { 
-            font-weight: 700; 
-            min-width: 24px; 
-            text-align: center; 
-            font-size: 17px; 
+      
+        .btn-minus  { background: #f44336; }   /* красный */
+        .btn-clear  { background: #9e9e9e; font-size: 18px; }   /* серый x */
+        .btn-plus1  { background: #3390ec; }   /* синий +1 */
+        .btn-plus10 { 
+            background: #4caf50; 
+            width: 44px; 
+            height: 44px; 
+            font-size: 24px; 
+        }   /* зелёный +10 */
+      
+        .count {
+            font-weight: 700;
+            min-width: 32px;
+            text-align: center;
+            font-size: 18px;
         }
-       
+      
         #send-btn {
             position: fixed;
             bottom: 20px;
@@ -83,63 +93,60 @@
             box-shadow: 0 4px 12px rgba(49, 181, 69, 0.3);
             z-index: 100;
         }
-       
-        #catalog { 
-            padding-bottom: 100px; 
+      
+        #catalog {
+            padding-bottom: 100px;
         }
-       
-        h2 { 
-            font-size: 22px; 
-            margin: 8px 0 24px 0; 
+      
+        h2 {
+            font-size: 22px;
+            margin: 8px 0 24px 0;
             text-align: center;
         }
     </style>
 </head>
 <body>
     <h2>📦 Выберите товары</h2>
-    <div id="catalog">
-        <!-- Товары добавятся сюда -->
-    </div>
-    
+    <div id="catalog"></div>
+   
     <button id="send-btn">Оформить заказ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // ← Здесь будут твои реальные товары
-const products = [
-    { name: 'Газированная вода "EVITA" 1,5л',     price: 37  },
-    { name: 'Газированная вода "EVITA" 1л',       price: 30  },
-    { name: 'Квас Деревенский 3л',                price: 112 },
-    { name: 'Лимонад Bazaleti Гранат 0,5л',       price: 59  },
-    { name: 'Лимонад Bazaleti Гранат 1л',         price: 98  },
-    { name: 'Лимонад Bazaleti Дюшес 0,5л',        price: 59  },
-    { name: 'Лимонад Bazaleti Дюшес 1л',          price: 98  },
-    { name: 'Лимонад Bazaleti Крем Сода 0,5л',    price: 59  },
-    { name: 'Лимонад Bazaleti Крем Сода 1л',      price: 98  },
-    { name: 'Лимонад Дюшес 2,9л',                 price: 112 },
-    { name: 'Минеральная вода (без газ) 0,33л',   price: 18  },
-    { name: 'Минеральная вода (без газ) 0,5л',    price: 22  },
-    { name: 'Минеральная вода (без газ) 1,5л',    price: 37  },
-    { name: 'Минеральная вода (без газ) 10л',     price: 127 },
-    { name: 'Минеральная вода (без газ) 1л',      price: 30  },
-    { name: 'Напиток газированный Анар 2,9л',     price: 112 },
-    { name: 'Напиток сокосодержащий GULLUG Черная смородина 1,0', price: 99 },
-    { name: 'Негазированная вода "EVITA" SPORT 0.75л', price: 46 },
-    { name: 'Огурцы консервированные корнишоны 3л ст/б', price: 330 },
-    { name: 'Сокосодер напиток "Pomegranate juice" гранат 1л', price: 99 },
-    { name: 'Сокосодержащий напиток "Cantaloupe juice" канталу', price: 61 },
-    { name: 'Сокосодержащий напиток "Blackcurrant juice" черная', price: 61 },
-    { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л', price: 61 },
-    { name: 'Сокосодержащий напиток "Pomegranate juice" гранат', price: 61 }
-];
-        
-        let cart = {};
+        const products = [
+            { name: 'Газированная вода "EVITA" 1,5л',      price: 37  },
+            { name: 'Газированная вода "EVITA" 1л',        price: 30  },
+            { name: 'Квас Деревенский 3л',                 price: 112 },
+            { name: 'Лимонад Bazaleti Гранат 0,5л',        price: 59  },
+            { name: 'Лимонад Bazaleti Гранат 1л',          price: 98  },
+            { name: 'Лимонад Bazaleti Дюшес 0,5л',         price: 59  },
+            { name: 'Лимонад Bazaleti Дюшес 1л',           price: 98  },
+            { name: 'Лимонад Bazaleti Крем Сода 0,5л',     price: 59  },
+            { name: 'Лимонад Bazaleti Крем Сода 1л',       price: 98  },
+            { name: 'Лимонад Дюшес 2,9л',                  price: 112 },
+            { name: 'Минеральная вода (без газ) 0,33л',    price: 18  },
+            { name: 'Минеральная вода (без газ) 0,5л',     price: 22  },
+            { name: 'Минеральная вода (без газ) 1,5л',     price: 37  },
+            { name: 'Минеральная вода (без газ) 10л',      price: 127 },
+            { name: 'Минеральная вода (без газ) 1л',       price: 30  },
+            { name: 'Напиток газированный Анар 2,9л',      price: 112 },
+            { name: 'Напиток сокосодержащий GULLUG Черная смородина 1,0', price: 99 },
+            { name: 'Негазированная вода "EVITA" SPORT 0.75л', price: 46 },
+            { name: 'Огурцы консервированные корнишоны 3л ст/б', price: 330 },
+            { name: 'Сокосодер напиток "Pomegranate juice" гранат 1л', price: 99 },
+            { name: 'Сокосодержащий напиток "Cantaloupe juice" канталу', price: 61 },
+            { name: 'Сокосодержащий напиток "Blackcurrant juice" черная', price: 61 },
+            { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л', price: 61 },
+            { name: 'Сокосодержащий напиток "Pomegranate juice" гранат', price: 61 }
+        ];
+       
+        let cart = {};  // name → количество
+
         const catalogDiv = document.getElementById('catalog');
 
-        // Генерация карточек товаров
-        products.forEach(p => {
+        products.forEach((p, index) => {
             const div = document.createElement('div');
             div.className = 'item';
             div.innerHTML = `
@@ -148,23 +155,41 @@ const products = [
                     <div class="price">${p.price} сом</div>
                 </div>
                 <div class="controls">
-                    <button class="btn-ctrl" onclick="change('${p.name}', -1)">−</button>
-                    <span class="count" id="count-${p.name.replace(/[^a-zA-Z0-9]/g,'_')}">0</span>
-                    <button class="btn-ctrl" onclick="change('${p.name}', 1)">+</button>
+                    <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
+                    <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
+                    <span class="count" id="count-${index}">0</span>
+                    <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
+                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+10</button>
                 </div>
             `;
             catalogDiv.appendChild(div);
         });
 
-        function change(name, delta) {
+        function changeQty(index, delta) {
+            const p = products[index];
+            const name = p.name;
             cart[name] = (cart[name] || 0) + delta;
             if (cart[name] < 0) cart[name] = 0;
-
-            const countEl = document.getElementById(`count-${name.replace(/[^a-zA-Z0-9]/g,'_')}`);
+            
+            const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
 
-            // Показываем/скрываем кнопку и обновляем сумму
-            const hasItems = Object.values(cart).some(c => c > 0);
+            updateSendButton();
+        }
+
+        function setQty(index, value) {
+            const p = products[index];
+            const name = p.name;
+            cart[name] = value;
+            
+            const countEl = document.getElementById(`count-${index}`);
+            if (countEl) countEl.innerText = cart[name];
+
+            updateSendButton();
+        }
+
+        function updateSendButton() {
+            const hasItems = Object.values(cart).some(q => q > 0);
             const sendBtn = document.getElementById('send-btn');
             
             sendBtn.style.display = hasItems ? 'block' : 'none';
@@ -172,9 +197,10 @@ const products = [
             if (hasItems) {
                 let total = 0;
                 products.forEach(p => {
-                    if (cart[p.name]) total += cart[p.name] * p.price;
+                    const qty = cart[p.name] || 0;
+                    if (qty > 0) total += qty * p.price;
                 });
-                sendBtn.innerText = `Заказать на ${total.toFixed(0)} сом`;
+                sendBtn.innerText = `Заказать на ${Math.round(total)} сом`;
             }
         }
 
@@ -185,9 +211,8 @@ const products = [
                     orderItems.push({ name: name, quantity: cart[name] });
                 }
             }
-
             if (orderItems.length === 0) return;
-
+            
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
