@@ -6,73 +6,93 @@
     <title>Заказ товаров</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--tg-theme-bg-color, #ffffff); 
-            color: var(--tg-theme-text-color, #000000); 
-            margin: 0; 
-            padding: 15px; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 15px;
         }
-        
-        .item { 
-            display: flex; 
-            align-items: center; 
-            border-bottom: 1px solid rgba(0,0,0,0.1); 
-            padding: 12px 0; 
+       
+        .item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding: 16px 0;
             gap: 15px;
         }
-
-        .product-img {
-            width: 65px;
-            height: 65px;
-            object-fit: cover;
-            border-radius: 12px;
-            background-color: #f0f0f0;
-            border: 1px solid rgba(0,0,0,0.05);
+       
+        .info { 
+            flex-grow: 1; 
         }
-
-        .info { flex-grow: 1; }
-        .name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
-        .price { font-size: 14px; color: #3390ec; font-weight: 500; }
-
-        .controls { display: flex; align-items: center; gap: 12px; }
-        
-        button.btn-ctrl { 
-            width: 32px;
-            height: 32px;
-            border: none; 
-            border-radius: 50%; 
-            background: #3390ec; 
-            color: white; 
-            font-size: 20px;
+       
+        .name { 
+            font-weight: 600; 
+            font-size: 16px; 
+            margin-bottom: 4px; 
+        }
+       
+        .price { 
+            font-size: 15px; 
+            color: #3390ec; 
+            font-weight: 500; 
+        }
+       
+        .controls { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+       
+        button.btn-ctrl {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: #3390ec;
+            color: white;
+            font-size: 22px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            touch-action: manipulation;
         }
-        
-        .count { font-weight: 700; min-width: 20px; text-align: center; font-size: 16px; }
-        
-        #send-btn { 
+       
+        .count { 
+            font-weight: 700; 
+            min-width: 24px; 
+            text-align: center; 
+            font-size: 17px; 
+        }
+       
+        #send-btn {
             position: fixed;
             bottom: 20px;
             left: 15px;
             right: 15px;
-            padding: 16px; 
-            background: #31b545; 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 17px; 
+            padding: 16px;
+            background: #31b545;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
             font-weight: 600;
-            display: none; 
+            display: none;
             box-shadow: 0 4px 12px rgba(49, 181, 69, 0.3);
             z-index: 100;
         }
-        
-        #catalog { padding-bottom: 100px; }
-        h2 { font-size: 20px; margin-top: 0; margin-bottom: 20px; }
+       
+        #catalog { 
+            padding-bottom: 100px; 
+        }
+       
+        h2 { 
+            font-size: 22px; 
+            margin: 8px 0 24px 0; 
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -80,35 +100,55 @@
     <div id="catalog">
         <!-- Товары добавятся сюда -->
     </div>
+    
     <button id="send-btn">Оформить заказ</button>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Данные товаров с твоими именами файлов из папки img
-        const products = [
-            { name: "70 метров", price: 18.5, img: "img/70m.png" },
-            { name: "Семейная", price: 18, img: "img/sem.png" },
-            { name: "Эконом", price: 8.5, img: "img/ekom.png" },
-            { name: "Формула", price: 15, img: "img/form.png" }
-        ];
-
+        // ← Здесь будут твои реальные товары
+const products = [
+    { name: 'Газированная вода "EVITA" 1,5л',     price: 37  },
+    { name: 'Газированная вода "EVITA" 1л',       price: 30  },
+    { name: 'Квас Деревенский 3л',                price: 112 },
+    { name: 'Лимонад Bazaleti Гранат 0,5л',       price: 59  },
+    { name: 'Лимонад Bazaleti Гранат 1л',         price: 98  },
+    { name: 'Лимонад Bazaleti Дюшес 0,5л',        price: 59  },
+    { name: 'Лимонад Bazaleti Дюшес 1л',          price: 98  },
+    { name: 'Лимонад Bazaleti Крем Сода 0,5л',    price: 59  },
+    { name: 'Лимонад Bazaleti Крем Сода 1л',      price: 98  },
+    { name: 'Лимонад Дюшес 2,9л',                 price: 112 },
+    { name: 'Минеральная вода (без газ) 0,33л',   price: 18  },
+    { name: 'Минеральная вода (без газ) 0,5л',    price: 22  },
+    { name: 'Минеральная вода (без газ) 1,5л',    price: 37  },
+    { name: 'Минеральная вода (без газ) 10л',     price: 127 },
+    { name: 'Минеральная вода (без газ) 1л',      price: 30  },
+    { name: 'Напиток газированный Анар 2,9л',     price: 112 },
+    { name: 'Напиток сокосодержащий GULLUG Черная смородина 1,0', price: 99 },
+    { name: 'Негазированная вода "EVITA" SPORT 0.75л', price: 46 },
+    { name: 'Огурцы консервированные корнишоны 3л ст/б', price: 330 },
+    { name: 'Сокосодер напиток "Pomegranate juice" гранат 1л', price: 99 },
+    { name: 'Сокосодержащий напиток "Cantaloupe juice" канталу', price: 61 },
+    { name: 'Сокосодержащий напиток "Blackcurrant juice" черная', price: 61 },
+    { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л', price: 61 },
+    { name: 'Сокосодержащий напиток "Pomegranate juice" гранат', price: 61 }
+];
         let cart = {};
-
         const catalogDiv = document.getElementById('catalog');
+
+        // Генерация карточек товаров
         products.forEach(p => {
             const div = document.createElement('div');
             div.className = 'item';
             div.innerHTML = `
-                <img src="${p.img}" class="product-img" alt="${p.name}" onerror="this.src='https://via.placeholder.com/65?text=No+Img'">
                 <div class="info">
                     <div class="name">${p.name}</div>
                     <div class="price">${p.price} сом</div>
                 </div>
                 <div class="controls">
-                    <button class="btn-ctrl" onclick="change('${p.name}', -1)">-</button>
-                    <span class="count" id="count-${p.name}">0</span>
+                    <button class="btn-ctrl" onclick="change('${p.name}', -1)">−</button>
+                    <span class="count" id="count-${p.name.replace(/[^a-zA-Z0-9]/g,'_')}">0</span>
                     <button class="btn-ctrl" onclick="change('${p.name}', 1)">+</button>
                 </div>
             `;
@@ -118,18 +158,22 @@
         function change(name, delta) {
             cart[name] = (cart[name] || 0) + delta;
             if (cart[name] < 0) cart[name] = 0;
-            document.getElementById(`count-${name}`).innerText = cart[name];
-            
+
+            const countEl = document.getElementById(`count-${name.replace(/[^a-zA-Z0-9]/g,'_')}`);
+            if (countEl) countEl.innerText = cart[name];
+
+            // Показываем/скрываем кнопку и обновляем сумму
             const hasItems = Object.values(cart).some(c => c > 0);
-            document.getElementById('send-btn').style.display = hasItems ? 'block' : 'none';
+            const sendBtn = document.getElementById('send-btn');
             
-            // Если есть товары, показываем итоговую сумму на кнопке
+            sendBtn.style.display = hasItems ? 'block' : 'none';
+
             if (hasItems) {
                 let total = 0;
                 products.forEach(p => {
                     if (cart[p.name]) total += cart[p.name] * p.price;
                 });
-                document.getElementById('send-btn').innerText = `Заказать на ${total.toFixed(2)} сом`;
+                sendBtn.innerText = `Заказать на ${total.toFixed(0)} сом`;
             }
         }
 
@@ -140,7 +184,9 @@
                     orderItems.push({ name: name, quantity: cart[name] });
                 }
             }
-            // Отправляем данные боту
+
+            if (orderItems.length === 0) return;
+
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
