@@ -63,12 +63,6 @@
         .btn-minus  { background: #f44336; }   /* красный */
         .btn-clear  { background: #9e9e9e; font-size: 18px; }   /* серый x */
         .btn-plus1  { background: #3390ec; }   /* синий +1 */
-        .btn-plus10 { 
-            background: #4caf50; 
-            width: 44px; 
-            height: 44px; 
-            font-size: 24px; 
-        }   /* зелёный +10 */
       
         .count {
             font-weight: 700;
@@ -159,7 +153,6 @@
                     <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
                     <span class="count" id="count-${index}">0</span>
                     <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
-                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+10</button>
                 </div>
             `;
             catalogDiv.appendChild(div);
