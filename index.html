@@ -22,7 +22,6 @@
             --radius-sm: 12px;
             --radius-pill: 999px;
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
                 --glass-bg: rgba(44, 44, 46, 0.72);
@@ -34,12 +33,10 @@
                 --accent-soft: rgba(10, 132, 255, 0.2);
             }
         }
-
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
             background: var(--tg-theme-bg-color, #f5f5f7);
@@ -49,7 +46,6 @@
             min-height: 100vh;
             padding-bottom: env(safe-area-inset-bottom, 0);
         }
-
         .page-header {
             position: sticky;
             top: 0;
@@ -62,7 +58,6 @@
             border-bottom: 1px solid var(--glass-border);
             box-shadow: 0 1px 0 var(--glass-shadow);
         }
-
         .page-header h2 {
             margin: 0;
             font-size: 22px;
@@ -71,11 +66,9 @@
             text-align: center;
             color: inherit;
         }
-
         #catalog {
             padding: 12px 16px 120px;
         }
-
         .item {
             display: flex;
             align-items: center;
@@ -90,16 +83,13 @@
             box-shadow: 0 2px 8px var(--glass-shadow);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .item:active {
             transform: scale(0.99);
         }
-
         .info {
             flex: 1;
             min-width: 0;
         }
-
         .name {
             font-weight: 500;
             font-size: 15px;
@@ -107,20 +97,17 @@
             margin-bottom: 4px;
             color: inherit;
         }
-
         .price {
             font-size: 15px;
             font-weight: 600;
             color: var(--accent);
         }
-
         .controls {
             display: flex;
             align-items: center;
             gap: 6px;
             flex-shrink: 0;
         }
-
         button.btn-ctrl {
             width: 34px;
             height: 34px;
@@ -136,27 +123,27 @@
             touch-action: manipulation;
             transition: transform 0.15s ease, opacity 0.15s ease;
         }
-
         button.btn-ctrl:active {
             transform: scale(0.92);
         }
-
         .btn-clear {
             background: var(--text-secondary);
             font-size: 16px;
             opacity: 0.9;
         }
-
         .btn-minus {
             background: var(--danger);
             box-shadow: 0 2px 8px rgba(255, 59, 48, 0.35);
         }
-
         .btn-plus1 {
             background: var(--accent);
             box-shadow: 0 2px 8px rgba(0, 113, 227, 0.35);
         }
-
+        .btn-plus10 {
+            background: var(--success);
+            box-shadow: 0 2px 8px rgba(52, 199, 89, 0.35);
+            font-size: 15px;
+        }
         .count {
             font-weight: 600;
             min-width: 28px;
@@ -164,7 +151,6 @@
             font-size: 17px;
             color: inherit;
         }
-
         #send-btn {
             position: fixed;
             bottom: calc(20px + env(safe-area-inset-bottom, 0));
@@ -185,7 +171,6 @@
             -webkit-backdrop-filter: saturate(180%) blur(20px);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         #send-btn:active {
             transform: scale(0.98);
         }
@@ -203,22 +188,22 @@
         tg.expand();
 
         const products = [
-            { name: 'Газированная вода "EVITA" 1,5л',      price: 37  },
-            { name: 'Газированная вода "EVITA" 1л',        price: 30  },
-            { name: 'Квас Деревенский 3л',                 price: 112 },
-            { name: 'Лимонад Bazaleti Гранат 0,5л',        price: 59  },
-            { name: 'Лимонад Bazaleti Гранат 1л',          price: 98  },
-            { name: 'Лимонад Bazaleti Дюшес 0,5л',         price: 59  },
-            { name: 'Лимонад Bazaleti Дюшес 1л',           price: 98  },
-            { name: 'Лимонад Bazaleti Крем Сода 0,5л',     price: 59  },
-            { name: 'Лимонад Bazaleti Крем Сода 1л',       price: 98  },
-            { name: 'Лимонад Дюшес 2,9л',                  price: 112 },
-            { name: 'Минеральная вода (без газ) 0,33л',    price: 18  },
-            { name: 'Минеральная вода (без газ) 0,5л',     price: 22  },
-            { name: 'Минеральная вода (без газ) 1,5л',     price: 37  },
-            { name: 'Минеральная вода (без газ) 10л',      price: 127 },
-            { name: 'Минеральная вода (без газ) 1л',       price: 30  },
-            { name: 'Напиток газированный Анар 2,9л',      price: 112 },
+            { name: 'Газированная вода "EVITA" 1,5л', price: 37 },
+            { name: 'Газированная вода "EVITA" 1л', price: 30 },
+            { name: 'Квас Деревенский 3л', price: 112 },
+            { name: 'Лимонад Bazaleti Гранат 0,5л', price: 59 },
+            { name: 'Лимонад Bazaleti Гранат 1л', price: 98 },
+            { name: 'Лимонад Bazaleti Дюшес 0,5л', price: 59 },
+            { name: 'Лимонад Bazaleti Дюшес 1л', price: 98 },
+            { name: 'Лимонад Bazaleti Крем Сода 0,5л', price: 59 },
+            { name: 'Лимонад Bazaleti Крем Сода 1л', price: 98 },
+            { name: 'Лимонад Дюшес 2,9л', price: 112 },
+            { name: 'Минеральная вода (без газ) 0,33л', price: 18 },
+            { name: 'Минеральная вода (без газ) 0,5л', price: 22 },
+            { name: 'Минеральная вода (без газ) 1,5л', price: 37 },
+            { name: 'Минеральная вода (без газ) 10л', price: 127 },
+            { name: 'Минеральная вода (без газ) 1л', price: 30 },
+            { name: 'Напиток газированный Анар 2,9л', price: 112 },
             { name: 'Напиток сокосодержащий GULLUG Черная смородина 1,0', price: 99 },
             { name: 'Негазированная вода "EVITA" SPORT 0.75л', price: 46 },
             { name: 'Огурцы консервированные корнишоны 3л ст/б', price: 330 },
@@ -228,8 +213,8 @@
             { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л', price: 61 },
             { name: 'Сокосодержащий напиток "Pomegranate juice" гранат', price: 61 }
         ];
-       
-        let cart = {};  // name → количество
+
+        let cart = {}; // name → количество
 
         const catalogDiv = document.getElementById('catalog');
 
@@ -246,6 +231,7 @@
                     <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
                     <span class="count" id="count-${index}">0</span>
                     <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
+                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+10</button>
                 </div>
             `;
             catalogDiv.appendChild(div);
@@ -256,7 +242,7 @@
             const name = p.name;
             cart[name] = (cart[name] || 0) + delta;
             if (cart[name] < 0) cart[name] = 0;
-            
+
             const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
 
@@ -267,7 +253,7 @@
             const p = products[index];
             const name = p.name;
             cart[name] = value;
-            
+
             const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
 
@@ -277,7 +263,7 @@
         function updateSendButton() {
             const hasItems = Object.values(cart).some(q => q > 0);
             const sendBtn = document.getElementById('send-btn');
-            
+
             sendBtn.style.display = hasItems ? 'block' : 'none';
 
             if (hasItems) {
@@ -298,7 +284,7 @@
                 }
             }
             if (orderItems.length === 0) return;
-            
+
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
