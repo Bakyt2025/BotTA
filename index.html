@@ -21,8 +21,6 @@
             --radius: 16px;
             --radius-sm: 12px;
             --radius-pill: 999px;
-            --stock-low: #ffcc00; /* Yellow for low stock */
-            --stock-ok: #34c759;  /* Green for good stock */
         }
         @media (prefers-color-scheme: dark) {
             :root {
@@ -73,10 +71,10 @@
         }
         .item {
             display: flex;
-            flex-direction: column; /* Изменено на столбец для лучшего размещения */
+            align-items: center;
             margin-bottom: 10px;
             padding: 14px 16px;
-            gap: 8px; /* Уменьшен разрыв */
+            gap: 14px;
             background: var(--glass-bg);
             backdrop-filter: saturate(180%) blur(20px);
             -webkit-backdrop-filter: saturate(180%) blur(20px);
@@ -87,12 +85,6 @@
         }
         .item:active {
             transform: scale(0.99);
-        }
-        .item-main-info {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Распределение элементов */
-            width: 100%;
         }
         .info {
             flex: 1;
@@ -109,33 +101,13 @@
             font-size: 15px;
             font-weight: 600;
             color: var(--accent);
-            white-space: nowrap; /* Цена не переносится */
         }
-        .stock {
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-align: right;
-            margin-top: 4px; /* Небольшой отступ сверху */
-        }
-        .stock.low {
-            color: var(--danger);
-            font-weight: 500;
-        }
-        .stock.critical {
-            color: var(--danger);
-            font-weight: 600;
-            text-shadow: 0 0 3px rgba(255, 59, 48, 0.4);
-        }
-
-        .controls-wrapper {
+        .controls {
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Выравнивание элементов управления вправо */
-            width: 100%;
             gap: 6px;
-            margin-top: 8px; /* Отступ сверху для элементов управления */
+            flex-shrink: 0;
         }
-
         button.btn-ctrl {
             width: 34px;
             height: 34px;
@@ -215,74 +187,59 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let products = []; // Будет загружено из параметров URL
+const products = [
+    { name: 'Газированная вода "EVITA" 1,5л',                    price: 41.00 },
+    { name: 'Газированная вода "EVITA" 1л',                      price: 33.00 },
+    { name: 'Квас Деревенский 0,9 л',                            price: 46.00 },
+    { name: 'Квас Деревенский 2,9 л',                            price: 110.00 },
+    { name: 'Лимонад Bazaleti Гранат 0,5л',                      price: 55.00 },
+    { name: 'Лимонад Bazaleti Гранат 1л',                        price: 94.00 },
+    { name: 'Лимонад Bazaleti Дюшес 1л',                         price: 94.00 },
+    { name: 'Лимонад Bazaleti Крем Сода 0,5л',                   price: 55.00 },
+    { name: 'Лимонад Bazaleti Крем Сода 1л',                     price: 94.00 },
+    { name: 'Лимонад Дюшес 1л',                                  price: 46.00 },
+    { name: 'Лимонад Дюшес 2,9л',                                price: 110.00 },
+    { name: 'Минеральная вода (без газ) 0,33л',                  price: 17.00 },
+    { name: 'Минеральная вода (без газ) 0,5л',                   price: 23.00 },
+    { name: 'Минеральная вода (без газ) 1,5л',                   price: 41.00 },
+    { name: 'Минеральная вода (без газ) 10л',                    price: 175.00 },
+    { name: 'Минеральная вода (без газ) 1л',                     price: 33.00 },
+    { name: 'Напиток газированный Анар 1л',                      price: 46.00 },
+    { name: 'Напиток газированный Анар 2,9л',                    price: 110.00 },
+    { name: 'Напиток сокосодержащ "Pomegranate juice" гранат 1л', price: 96.00 },
+    { name: 'Напиток сокосодержащий "Melon juice" дыня 1 л',      price: 96.00 },
+    { name: 'Напиток сокосодержащий GULLUG Черная смородина 1,0', price: 96.00 },
+    { name: 'Негазированная вода "EVITA" SPORT 0.75л',           price: 42.00 },
+    { name: 'Огурцы консервированные корнишоны 3л ст/б',         price: 295.00 },
+    { name: 'Сок Деревенский Вишня 4,9л',                        price: 130.00 },
+    { name: 'Сок Деревенский Гранат 4,9л',                       price: 130.00 },
+    { name: 'Сок Деревенский Мультик 4,9л',                      price: 130.00 },
+    { name: 'Сокосодер напиток "Pomegranate juice" гранат 0.5 л', price: 60.00 },
+    { name: 'Сокосодержащий напиток " Cantaloupe juice" канталупа 0,5 л', price: 60.00 },
+    { name: 'Сокосодержащий напиток "Blackcurrant juice" черная смородина', price: 60.00 },
+    { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л',   price: 60.00 },
+];
+
+
+
         let cart = {}; // name → количество
 
         const catalogDiv = document.getElementById('catalog');
-        const sendBtn = document.getElementById('send-btn');
-
-        // Функция для парсинга параметров URL
-        function getQueryParams() {
-            const params = {};
-            const queryString = window.location.search.substring(1);
-            const regex = /([^&=]+)=([^&]*)/g;
-            let m;
-            while (m = regex.exec(queryString)) {
-                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-            }
-            return params;
-        }
-
-        // Загрузка товаров из параметра 'data' в URL
-        const queryParams = getQueryParams();
-        if (queryParams.data) {
-            try {
-                const appData = JSON.parse(queryParams.data);
-                if (appData.products && Array.isArray(appData.products)) {
-                    products = appData.products;
-                    console.log("Загружены товары из URL:", products);
-                }
-            } catch (e) {
-                console.error("Ошибка парсинга данных из URL:", e);
-                // Fallback или сообщение об ошибке пользователю
-            }
-        }
-
-        // Если товары не были загружены из URL, можно использовать пустой массив или какой-то дефолт
-        if (products.length === 0) {
-            console.warn("Товары не были загружены из URL. Каталог может быть пустым.");
-        }
-
 
         products.forEach((p, index) => {
             const div = document.createElement('div');
             div.className = 'item';
-
-            // Определяем класс для остатка
-            let stockClass = '';
-            let stockText = `${p.stock} шт`;
-            if (p.stock < 10 && p.stock > 0) {
-                stockClass = 'low';
-                stockText += ' (мало)';
-            } else if (p.stock === 0) {
-                stockClass = 'critical';
-                stockText = 'Нет в наличии';
-            }
-
             div.innerHTML = `
-                <div class="item-main-info">
-                    <div class="info">
-                        <div class="name">${p.name}</div>
-                        <div class="price">${p.price.toFixed(2).replace(/\.00$/, '')} сом</div>
-                    </div>
-                    <div class="stock ${stockClass}">Остаток: ${stockText}</div>
+                <div class="info">
+                    <div class="name">${p.name}</div>
+                    <div class="price">${p.price} сом</div>
                 </div>
-                <div class="controls-wrapper">
+                <div class="controls">
                     <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
                     <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
                     <span class="count" id="count-${index}">0</span>
                     <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
-                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+10</button>
+                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+</button>
                 </div>
             `;
             catalogDiv.appendChild(div);
@@ -291,15 +248,7 @@
         function changeQty(index, delta) {
             const p = products[index];
             const name = p.name;
-            let currentQty = cart[name] || 0;
-
-            // Проверяем, не превышает ли новое количество остаток
-            if (delta > 0 && (currentQty + delta) > p.stock) {
-                alert(`Недостаточно товара "${name}". В наличии ${p.stock} шт.`);
-                return; // Отменяем изменение количества
-            }
-            
-            cart[name] = currentQty + delta;
+            cart[name] = (cart[name] || 0) + delta;
             if (cart[name] < 0) cart[name] = 0;
 
             const countEl = document.getElementById(`count-${index}`);
@@ -311,14 +260,7 @@
         function setQty(index, value) {
             const p = products[index];
             const name = p.name;
-
-            // Проверяем, не превышает ли новое количество остаток
-            if (value > p.stock) {
-                alert(`Недостаточно товара "${name}". В наличии ${p.stock} шт.`);
-                cart[name] = p.stock; // Устанавливаем максимальное доступное количество
-            } else {
-                cart[name] = value;
-            }
+            cart[name] = value;
 
             const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
@@ -328,6 +270,8 @@
 
         function updateSendButton() {
             const hasItems = Object.values(cart).some(q => q > 0);
+            const sendBtn = document.getElementById('send-btn');
+
             sendBtn.style.display = hasItems ? 'block' : 'none';
 
             if (hasItems) {
@@ -336,19 +280,15 @@
                     const qty = cart[p.name] || 0;
                     if (qty > 0) total += qty * p.price;
                 });
-                sendBtn.innerText = `Заказать на ${total.toFixed(2).replace(/\.00$/, '')} сом`;
+                sendBtn.innerText = `Заказать на ${Math.round(total)} сом`;
             }
         }
 
-        sendBtn.addEventListener('click', () => {
+        document.getElementById('send-btn').addEventListener('click', () => {
             let orderItems = [];
             for (let name in cart) {
-                const qty = cart[name];
-                if (qty > 0) {
-                    const product = products.find(p => p.name === name);
-                    if (product) {
-                        orderItems.push({ name: name, quantity: qty, price: product.price }); // Добавляем цену для сохранения
-                    }
+                if (cart[name] > 0) {
+                    orderItems.push({ name: name, quantity: cart[name] });
                 }
             }
             if (orderItems.length === 0) return;
@@ -356,9 +296,6 @@
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
-
-        // Инициализация кнопки при загрузке
-        updateSendButton();
     </script>
 </body>
 </html>
