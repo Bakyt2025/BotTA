@@ -66,6 +66,29 @@
             text-align: center;
             color: inherit;
         }
+        /* добавлено: стили для поиска */
+        .search-container {
+            padding: 8px 16px;
+            background: inherit;
+            position: sticky;
+            top: 70px; /* под заголовком */
+            z-index: 40;
+            background: var(--glass-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+        #search-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-pill);
+            background: var(--glass-bg);
+            color: inherit;
+            outline: none;
+        }
+        #search-input:focus {
+            border-color: var(--accent);
+        }
         #catalog {
             padding: 12px 16px 120px;
         }
@@ -180,6 +203,10 @@
     <header class="page-header">
         <h2>Каталог: Базар-Коргон</h2>
     </header>
+    <!-- добавлено: контейнер поиска -->
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="🔍 Поиск товара...">
+    </div>
     <div id="catalog"></div>
     <button id="send-btn">Оформить заказ</button>
 
@@ -249,6 +276,23 @@ const products = [
             `;
             catalogDiv.appendChild(div);
         });
+
+        // добавлено: фильтрация по поиску
+        const searchInput = document.getElementById('search-input');
+        function filterCatalog() {
+            const term = searchInput.value.toLowerCase();
+            const items = document.querySelectorAll('#catalog .item');
+            items.forEach(item => {
+                const nameEl = item.querySelector('.name');
+                const name = nameEl ? nameEl.innerText.toLowerCase() : '';
+                if (term === '' || name.includes(term)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        searchInput.addEventListener('input', filterCatalog);
 
         function changeQty(index, delta) {
             const p = products[index];
