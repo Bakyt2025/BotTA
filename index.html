@@ -174,19 +174,33 @@
         #send-btn:active {
             transform: scale(0.98);
         }
+        .group-tab {
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            font-size: 15px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .group-tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
     </style>
 </head>
 <body>
     <header class="page-header">
         <h2>Выберите товары</h2>
     </header>
+    <div id="group-tabs" style="display:flex;overflow-x:auto;padding:8px 16px;gap:8px;background:var(--glass-bg);border-bottom:1px solid var(--glass-border);"></div>
     <div id="catalog"></div>
     <button id="send-btn">Оформить заказ</button>
-
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-
 const products = [
     { name: 'Газированная вода "EVITA" 1,5л', price: 38.00 },
     { name: 'Газированная вода "EVITA" 1л', price: 33.00 },
@@ -254,59 +268,68 @@ const products = [
     { name: 'Сокосодержащий напиток "Melon juice" дыня 0,5 л', price: 60.00 },
     { name: 'Сокосодержащий напиток "Pomegranate juice" гранат 0.5 л', price: 60.00 }
 ];
-        
+       
         let cart = {}; // name → количество
-
         const catalogDiv = document.getElementById('catalog');
+let currentGroup = 'Все';
+const groupNames = ['Все', 'Вода', 'Квас', 'Лимонады', 'Энергетики', 'Газ. напитки', 'Негаз. напитки', 'Соки', 'Консервы'];
 
-        products.forEach((p, index) => {
-            const div = document.createElement('div');
-            div.className = 'item';
-            div.innerHTML = `
-                <div class="info">
-                    <div class="name">${p.name}</div>
-                    <div class="price">${p.price} сом</div>
-                </div>
-                <div class="controls">
-                    <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
-                    <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
-                    <span class="count" id="count-${index}">0</span>
-                    <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
-                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+</button>
-                </div>
-            `;
-            catalogDiv.appendChild(div);
-        });
+function renderCatalog() {
+  catalogDiv.innerHTML = '';
+  products.forEach((p, index) => {
+    if (currentGroup !== 'Все') {
+      const n = p.name.toLowerCase();
+      let belongs = false;
+      if (currentGroup === 'Вода') belongs = n.includes('вода') || n.includes('evita') || n.includes('минеральная');
+      else if (currentGroup === 'Квас') belongs = n.includes('квас');
+      else if (currentGroup === 'Лимонады') belongs = n.includes('лимон');
+      else if (currentGroup === 'Энергетики') belongs = n.includes('khabib') || n.includes('энергетик');
+      else if (currentGroup === 'Газ. напитки') belongs = n.includes('напиток газ');
+      else if (currentGroup === 'Негаз. напитки') belongs = n.includes('напиток негаз') || n.includes('frutik') || n.includes('кувшин') || n.includes('ок ');
+      else if (currentGroup === 'Соки') belongs = n.includes('сок') || n.includes('сокосодержащий');
+      else if (currentGroup === 'Консервы') belongs = n.includes('огурцы');
+      if (!belongs) return;
+    }
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.innerHTML = `
+      <div class="info">
+        <div class="name">${p.name}</div>
+        <div class="price">${p.price} сом</div>
+      </div>
+      <div class="controls">
+        <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
+        <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
+        <span class="count" id="count-${index}">${cart[p.name] || 0}</span>
+        <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
+        <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+</button>
+      </div>
+    `;
+    catalogDiv.appendChild(div);
+  });
+}
 
         function changeQty(index, delta) {
             const p = products[index];
             const name = p.name;
             cart[name] = (cart[name] || 0) + delta;
             if (cart[name] < 0) cart[name] = 0;
-
             const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
-
             updateSendButton();
         }
-
         function setQty(index, value) {
             const p = products[index];
             const name = p.name;
             cart[name] = value;
-
             const countEl = document.getElementById(`count-${index}`);
             if (countEl) countEl.innerText = cart[name];
-
             updateSendButton();
         }
-
         function updateSendButton() {
             const hasItems = Object.values(cart).some(q => q > 0);
             const sendBtn = document.getElementById('send-btn');
-
             sendBtn.style.display = hasItems ? 'block' : 'none';
-
             if (hasItems) {
                 let total = 0;
                 products.forEach(p => {
@@ -316,7 +339,6 @@ const products = [
                 sendBtn.innerText = `Заказать на ${Math.round(total)} сом`;
             }
         }
-
         document.getElementById('send-btn').addEventListener('click', () => {
             let orderItems = [];
             for (let name in cart) {
@@ -325,10 +347,23 @@ const products = [
                 }
             }
             if (orderItems.length === 0) return;
-
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
+
+const tabsDiv = document.getElementById('group-tabs');
+groupNames.forEach((g) => {
+  const btn = document.createElement('button');
+  btn.textContent = g;
+  btn.className = `group-tab${g === currentGroup ? ' active' : ''}`;
+  btn.onclick = () => {
+    currentGroup = g;
+    document.querySelectorAll('.group-tab').forEach(b => b.classList.toggle('active', b.textContent === g));
+    renderCatalog();
+  };
+  tabsDiv.appendChild(btn);
+});
+renderCatalog();
     </script>
 </body>
 </html>
