@@ -174,20 +174,41 @@
         #send-btn:active {
             transform: scale(0.98);
         }
+
+        /* === ГРУППЫ — 3 строки по 3 кнопки === */
+        #group-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: 0 1px 0 var(--glass-shadow);
+        }
         .group-tab {
-            padding: 8px 16px;
+            padding: 12px 8px;
             border-radius: var(--radius-pill);
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
-            font-size: 15px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-align: center;
             cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px var(--glass-shadow);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .group-tab:active {
+            transform: scale(0.95);
         }
         .group-tab.active {
             background: var(--accent);
             color: white;
             border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.4);
         }
     </style>
 </head>
@@ -195,12 +216,14 @@
     <header class="page-header">
         <h2>Выберите товары</h2>
     </header>
-    <div id="group-tabs" style="display:flex;overflow-x:auto;padding:8px 16px;gap:8px;background:var(--glass-bg);border-bottom:1px solid var(--glass-border);"></div>
+    <div id="group-tabs"></div>
     <div id="catalog"></div>
     <button id="send-btn">Оформить заказ</button>
+
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
 const products = [
     { name: 'Газированная вода "EVITA" 1,5л', price: 38.00 },
     { name: 'Газированная вода "EVITA" 1л', price: 33.00 },
