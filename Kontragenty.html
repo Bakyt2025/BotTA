@@ -3,74 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Выбор магазина</title>
+    <title>Магазины</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { font-family: -apple-system, sans-serif; background: #f2f2f7; margin: 0; padding: 15px; }
         .search { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 15px; box-sizing: border-box; }
         .card { background: white; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .geo-btn { width: 60px; min-height: 70px; background: #e5f1f6; display: flex; align-items: center; justify-content: center; font-size: 24px; border-right: 1px solid #eee; cursor: pointer; }
+        .geo-btn { width: 60px; min-height: 70px; background: #e5f1f6; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border-right: 1px solid #eee; }
         .info-area { flex: 1; padding: 12px; cursor: pointer; position: relative; }
-        .name { font-weight: 600; font-size: 15px; color: #1c1c1e; padding-right: 25px; }
+        .name { font-weight: 600; font-size: 15px; padding-right: 30px; }
         .addr { font-size: 12px; color: #8e8e93; margin-top: 3px; }
-        .status-icon { position: absolute; right: 12px; top: 15px; font-size: 16px; }
+        .status { position: absolute; right: 12px; top: 15px; font-size: 16px; }
     </style>
 </head>
 <body>
-    <input type="text" id="search" class="search" placeholder="🔍 Поиск магазина...">
+    <input type="text" id="search" class="search" placeholder="🔍 Поиск...">
     <div id="list"></div>
-
     <script>
         let tg = window.Telegram.WebApp;
         let clients = [];
-
         async function load() {
             const r = await fetch('data.json?v=' + Date.now());
-            const d = await r.json();
-            clients = d.clients || [];
-            render();
+            const d = await r.json(); clients = d.clients || []; render();
         }
-
         function render() {
             const term = document.getElementById('search').value.toLowerCase();
-            const cont = document.getElementById('list');
-            cont.innerHTML = '';
+            const cont = document.getElementById('list'); cont.innerHTML = '';
             clients.filter(c => c.name.toLowerCase().includes(term)).forEach((c, idx) => {
-                // ЛОГИКА ПИКТОГРАММ
-                let icon = "⚪"; // По умолчанию: нет координат и фото
-                let hasGPS = c.coords && c.coords !== "0,0";
-                let hasPhoto = c.hasPhoto === true;
-
-                if (hasGPS && hasPhoto) icon = "📸"; // Есть и то и другое
-                else if (hasGPS) icon = "📍";        // Только GPS
-
+                let icon = "⚪"; 
+                if (c.coords && c.coords !== "0,0") icon = c.hasPhoto ? "📸" : "📍";
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.innerHTML = `
-                    <div class="geo-btn" onclick="startVisit(${idx})">📍</div>
+                div.innerHTML = `<div class="geo-btn" onclick="startVisit(${idx})">📍</div>
                     <div class="info-area" onclick="startOrder(${idx})">
-                        <div class="name">${c.name}</div>
-                        <div class="addr">${c.address}</div>
-                        <div class="status-icon">${icon}</div>
-                    </div>
-                `;
+                        <div class="name">${c.name}</div><div class="addr">${c.address}</div>
+                        <div class="status">${icon}</div>
+                    </div>`;
                 cont.appendChild(div);
             });
         }
-
-        window.startOrder = function(idx) {
-            let c = clients.filter(cl => cl.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()))[idx];
+        function startOrder(idx) {
+            let c = clients.filter(i => i.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()))[idx];
             localStorage.setItem('selectedClient', JSON.stringify(c));
             window.location.href = 'Nomenklatura.html';
         }
-
-        window.startVisit = function(idx) {
-            let c = clients.filter(cl => cl.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()))[idx];
+        function startVisit(idx) {
+            let c = clients.filter(i => i.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()))[idx];
             navigator.geolocation.getCurrentPosition((pos) => {
                 tg.sendData(JSON.stringify({type: 'visit_start', client: c, coords: pos.coords.latitude + "," + pos.coords.longitude}));
             }, (err) => { alert("Включите GPS"); }, {enableHighAccuracy:true});
         }
-
         document.getElementById('search').oninput = render;
         load();
     </script>
