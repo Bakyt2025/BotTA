@@ -5255,6 +5255,12 @@
             "address": "",
             "phone": "",
             "coords": ""
+        },
+        {
+            "name": "Маша",
+            "address": "Ленина 745",
+            "phone": "",
+            "coords": "0,0"
         }
     ],
     "products": [
