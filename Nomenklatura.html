@@ -3,98 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Товары</title>
+    <title>Выбор товаров</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --accent: #34c759; }
-        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding-bottom: 100px; }
-        .header { background: #e5f1f6; padding: 12px 15px; font-weight: 600; position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; border-bottom: 1px solid #ddd; }
-        .search-box { padding: 10px 15px; }
-        .search { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #f2f2f7; outline: none; box-sizing: border-box; font-size: 16px; }
-        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f2f2f7; }
-        .controls { display: flex; align-items: center; gap: 15px; }
-        .btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #e9e9eb; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        :root { --accent: #34c759; --text-main: #1c1c1e; --text-sec: #8e8e93; }
+        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding-bottom: 100px; color: var(--text-main); }
+        
+        /* Шапка с именем клиента */
+        .header { 
+            background: #e5f1f6; padding: 12px 15px; font-weight: 600; 
+            position: sticky; top: 0; z-index: 10; display: flex; 
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; 
+        }
+        .back-link { color: #007aff; text-decoration: none; font-size: 14px; font-weight: 400; }
+
+        /* Поиск */
+        .search-container { padding: 10px 15px; background: #fff; }
+        .search-input { 
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
+            background: #f2f2f7; outline: none; box-sizing: border-box; font-size: 16px; 
+        }
+
+        /* Список товаров */
+        .product-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px; border-bottom: 1px solid #f2f2f7; 
+        }
+        .p-info { flex: 1; padding-right: 10px; }
+        .p-name { font-weight: 500; font-size: 15px; margin-bottom: 3px; line-height: 1.3; }
+        .p-price { color: #007aff; font-weight: 700; font-size: 14px; }
+
+        /* Кнопки + - */
+        .controls { display: flex; align-items: center; gap: 15px; user-select: none; }
+        .btn { 
+            width: 40px; height: 40px; border-radius: 50%; border: none; 
+            background: #e9e9eb; font-size: 24px; display: flex; 
+            align-items: center; justify-content: center; cursor: pointer; touch-action: manipulation; 
+        }
         .btn-plus { background: var(--accent); color: white; }
-        .q { min-width: 24px; text-align: center; font-weight: bold; font-size: 18px; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: white; border-top: 1px solid #eee; display: none; }
-        .btn-send { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: 600; }
+        .qty-label { min-width: 24px; text-align: center; font-weight: 700; font-size: 18px; }
+
+        /* Футер с кнопкой заказа */
+        .footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid #eee; display: none; z-index: 20; 
+        }
+        .btn-send { 
+            width: 100%; padding: 16px; background: var(--accent); color: white; 
+            border: none; border-radius: 14px; font-size: 18px; font-weight: 600; 
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+        }
+        
+        #loading { text-align: center; padding: 40px; color: var(--text-sec); }
     </style>
 </head>
 <body>
-    <div class="header"><span id="c-name">Загрузка...</span><a href="Kontragenty.html" style="color:#007aff; text-decoration:none;">Назад</a></div>
-    <div class="search-box"><input type="text" id="search" placeholder="🔍 Поиск товара..." class="search"></div>
-    <div id="catalog"><p style="text-align:center; padding:20px; color:#888;">Загрузка товаров...</p></div>
-    <div id="footer" class="footer"><button class="btn-send" onclick="send()">Заказать: <span id="total">0</span> сом</button></div>
+
+    <div class="header">
+        <span id="client-name">Загрузка...</span>
+        <a href="Kontragenty.html" class="back-link">Назад</a>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search" class="search-input" placeholder="🔍 Поиск товара...">
+    </div>
+
+    <div id="catalog">
+        <div id="loading">Загрузка списка товаров...</div>
+    </div>
+
+    <div id="footer" class="footer">
+        <button class="btn-send" onclick="sendOrderToBot()">
+            Оформить на <span id="total-sum">0</span> сом
+        </button>
+    </div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    let products = []; let cart = {};
-    const params = new URLSearchParams(window.location.search);
-    let client = params.has('name') ? {name: params.get('name')} : JSON.parse(localStorage.getItem('selectedClient'));
+    tg.expand();
 
-    if (!client) { location.href = 'Kontragenty.html'; } 
-    else { document.getElementById('c-name').innerText = client.name; }
+    let allProducts = []; // Массив всех товаров из JSON
+    let cart = {}; // Корзина: { "Название": {qty: 1, price: 100} }
 
-    async function load() {
+    // 1. Определяем, для какого клиента открыт заказ
+    const urlParams = new URLSearchParams(window.location.search);
+    let client = null;
+
+    if (urlParams.has('name')) {
+        // Если пришли по прямой ссылке после добавления магазина
+        client = { name: urlParams.get('name') };
+        localStorage.setItem('selectedClient', JSON.stringify(client));
+    } else {
+        // Если пришли со страницы выбора контрагентов
+        client = JSON.parse(localStorage.getItem('selectedClient'));
+    }
+
+    if (!client) {
+        window.location.href = 'Kontragenty.html';
+    } else {
+        document.getElementById('client-name').innerText = "🛒 " + client.name;
+    }
+
+    // 2. Загружаем товары из data.json
+    async function loadProducts() {
         try {
-            const r = await fetch('data.json?v=' + Date.now());
-            const d = await r.json();
-            products = d.products || [];
-            render();
+            // Добавляем случайное число к ссылке, чтобы обойти кэш
+            const response = await fetch('data.json?v=' + Date.now());
+            const data = await response.json();
+            allProducts = data.products || [];
+            renderCatalog();
         } catch (e) {
-            document.getElementById('catalog').innerHTML = '<p style="color:red; text-align:center;">Ошибка загрузки</p>';
+            document.getElementById('catalog').innerHTML = '<div style="color:red; text-align:center; padding:20px;">Ошибка загрузки товаров.</div>';
         }
     }
 
-    function render() {
-        const t = document.getElementById('search').value.toLowerCase();
-        const cont = document.getElementById('catalog');
-        cont.innerHTML = '';
-        products.forEach((p, idx) => {
-            if (p.name.toLowerCase().includes(t)) {
-                const d = document.createElement('div');
-                d.className = 'item';
-                d.innerHTML = `<div><b>${p.name}</b><br>${p.price} сом</div>
+    // 3. Отрисовка списка на экране
+    function renderCatalog() {
+        const term = document.getElementById('search').value.toLowerCase();
+        const container = document.getElementById('catalog');
+        container.innerHTML = '';
+
+        let count = 0;
+        allProducts.forEach((p, index) => {
+            if (p.name.toLowerCase().includes(term)) {
+                count++;
+                const div = document.createElement('div');
+                div.className = 'product-item';
+                // Используем index для кнопок, чтобы не было проблем с кавычками в именах
+                div.innerHTML = `
+                    <div class="p-info">
+                        <div class="p-name">${p.name}</div>
+                        <div class="p-price">${p.price} сом</div>
+                    </div>
                     <div class="controls">
-                        <button class="btn" onclick="upd(${idx}, -1)">-</button>
-                        <span class="q" id="q-${idx}">${cart[p.name] ? cart[p.name].qty : 0}</span>
-                        <button class="btn btn-plus" onclick="upd(${idx}, 1)">+</button>
-                    </div>`;
-                cont.appendChild(d);
+                        <button class="btn" onclick="updateQty(${index}, -1)">-</button>
+                        <span class="qty-label" id="q-${index}">${cart[p.name] ? cart[p.name].qty : 0}</span>
+                        <button class="btn btn-plus" onclick="updateQty(${index}, 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(div);
             }
         });
+
+        if (count === 0 && allProducts.length > 0) {
+            container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Ничего не найдено</div>';
+        }
     }
 
-    window.upd = function(idx, delta) {
-        const p = products[idx];
-        if (!cart[p.name]) cart[p.name] = { qty: 0, price: p.price };
-        
-        cart[p.name].qty += delta;
-        if (cart[p.name].qty <= 0) delete cart[p.name];
-        
-        const el = document.getElementById('q-' + idx);
-        if (el) el.innerText = cart[p.name] ? cart[p.name].qty : 0;
-        
-        let sum = 0;
-        for (let name in cart) { sum += cart[name].qty * cart[name].price; }
-        document.getElementById('footer').style.display = sum > 0 ? 'block' : 'none';
-        document.getElementById('total').innerText = Math.round(sum);
-    };
+    // 4. Изменение количества
+    window.updateQty = function(idx, delta) {
+        const p = allProducts[idx];
+        if (!cart[p.name]) {
+            cart[p.name] = { qty: 0, price: p.price };
+        }
 
-    window.send = function() {
+        cart[p.name].qty += delta;
+
+        // Удаляем из корзины, если 0
+        if (cart[p.name].qty <= 0) {
+            delete cart[p.name];
+        }
+
+        // Обновляем число только в конкретной строке
+        const label = document.getElementById('q-' + idx);
+        if (label) {
+            label.innerText = cart[p.name] ? cart[p.name].qty : 0;
+        }
+
+        updateFooter();
+    }
+
+    // 5. Расчет итоговой суммы и показ футера
+    function updateFooter() {
+        let total = 0;
+        for (let key in cart) {
+            total += cart[key].qty * cart[key].price;
+        }
+
+        const footer = document.getElementById('footer');
+        if (total > 0) {
+            footer.style.display = 'block';
+            document.getElementById('total-sum').innerText = Math.round(total);
+        } else {
+            footer.style.display = 'none';
+        }
+    }
+
+    // 6. Отправка заказа в Telegram Bot
+    window.sendOrderToBot = function() {
         if (Object.keys(cart).length === 0) return;
-        // Отправляем объект: имя_клиента, товары (с кол-вом и ценой), итого
-        tg.sendData(JSON.stringify({
+
+        const result = {
             client: client,
             items: cart,
-            total: document.getElementById('total').innerText
-        }));
+            total: document.getElementById('total-sum').innerText
+        };
+
+        tg.sendData(JSON.stringify(result));
         tg.close();
     }
 
-    document.getElementById('search').oninput = render;
-    load();
-    setTimeout(() => { if (products.length === 0) load(); }, 1500);
+    // Живой поиск
+    document.getElementById('search').oninput = renderCatalog;
+
+    // Запуск
+    loadProducts();
+
+    // Страховка от пустой страницы: если товары не прогрузились за 1.5 сек, пробуем еще раз
+    setTimeout(() => {
+        if (allProducts.length === 0) loadProducts();
+    }, 1500);
+
 </script>
 </body>
 </html>
