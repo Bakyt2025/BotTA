@@ -5273,6 +5273,12 @@
             "address": "Ленина 56",
             "phone": "",
             "coords": "0,0"
+        },
+        {
+            "name": "Мика",
+            "address": "Ленина 756",
+            "phone": "",
+            "coords": "0,0"
         }
     ],
     "products": [
