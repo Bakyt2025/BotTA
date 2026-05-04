@@ -160,22 +160,25 @@
         }
     }
 
-    window.sendOrderToBot = function() {
-        if (Object.keys(cart).length === 0) return;
+window.sendOrderToBot = function() {
+    if (Object.keys(cart).length === 0) return;
 
-        // Блокируем кнопку, чтобы не нажали дважды
-        document.getElementById('order-btn').disabled = true;
+    // Блокируем кнопку
+    document.getElementById('order-btn').disabled = true;
 
-        const result = {
-            client: client,
-            items: cart,
-            total: document.getElementById('total-sum').innerText,
-            coords: client.currentCoords || "0,0" // Отправляем координаты боту
-        };
+    // Получаем клиента из памяти
+    const clientData = JSON.parse(localStorage.getItem('selectedClient'));
 
-        tg.sendData(JSON.stringify(result));
-        tg.close();
-    }
+    const result = {
+        client: clientData,
+        items: cart,
+        total: document.getElementById('total-sum').innerText,
+        coords: (clientData && clientData.currentCoords) ? clientData.currentCoords : "0,0"
+    };
+
+    tg.sendData(JSON.stringify(result));
+    tg.close();
+}
 
     document.getElementById('search').oninput = renderCatalog;
     loadProducts();
