@@ -11,15 +11,15 @@
         .card { background: white; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); min-height: 70px; }
         .geo-btn { width: 60px; align-self: stretch; background: #e5f1f6; display: flex; align-items: center; justify-content: center; font-size: 24px; border-right: 1px solid #eee; cursor: pointer; }
         .info-area { flex: 1; padding: 12px; cursor: pointer; }
-        .name { font-weight: 600; font-size: 16px; color: #1c1c1e; line-height: 1.2; }
+        .name { font-weight: 600; font-size: 16px; color: #1c1c1e; }
         .addr { font-size: 13px; color: #8e8e93; margin-top: 3px; }
-        #loading-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; font-weight: bold; }
+        #loading { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div id="loading-overlay">⏳ Получение GPS...</div>
+    <div id="loading">⏳ Получение GPS...</div>
     <input type="text" id="search" class="search" placeholder="🔍 Поиск магазина...">
-    <div id="list">Загрузка списка...</div>
+    <div id="list"></div>
 
     <script>
         let tg = window.Telegram.WebApp;
@@ -27,27 +27,23 @@
         let filtered = [];
 
         async function load() {
-            try {
-                const r = await fetch('data.json?v=' + Date.now());
-                const d = await r.json();
-                clients = d.clients || [];
-                render();
-            } catch (e) { document.getElementById('list').innerText = "Ошибка загрузки данных."; }
+            const r = await fetch('data.json?v=' + Date.now());
+            const d = await r.json();
+            clients = d.clients || [];
+            render();
         }
 
         function render() {
             const term = document.getElementById('search').value.toLowerCase();
             const cont = document.getElementById('list');
             cont.innerHTML = '';
-            
             filtered = clients.filter(c => c.name.toLowerCase().includes(term));
-
             filtered.forEach((c, idx) => {
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `
-                    <div class="geo-btn" onclick="selectWithGPS(${idx})">📍</div>
-                    <div class="info-area" onclick="selectSimple(${idx})">
+                    <div class="geo-btn" onclick="startVisit(${idx})">📍</div>
+                    <div class="info-area" onclick="startOrder(${idx})">
                         <div class="name">${c.name}</div>
                         <div class="addr">${c.address}</div>
                     </div>
@@ -56,29 +52,27 @@
             });
         }
 
-        window.selectSimple = function(idx) {
-            let c = filtered[idx];
-            c.currentCoords = "0,0";
-            finish(c);
-        }
-
-        window.selectWithGPS = function(idx) {
-            let c = filtered[idx];
-            document.getElementById('loading-overlay').style.display = 'flex';
-            
-            navigator.geolocation.getCurrentPosition((pos) => {
-                c.currentCoords = pos.coords.latitude + "," + pos.coords.longitude;
-                finish(c);
-            }, (err) => {
-                alert("Не удалось получить GPS. Проверьте включен ли Гео в телефоне.");
-                c.currentCoords = "0,0";
-                finish(c);
-            }, { enableHighAccuracy: true, timeout: 7000 });
-        }
-
-        function finish(c) {
-            localStorage.setItem('selectedClient', JSON.stringify(c));
+        // Обычный заказ (без GPS и фото)
+        window.startOrder = function(idx) {
+            localStorage.setItem('selectedClient', JSON.stringify(filtered[idx]));
             window.location.href = 'Nomenklatura.html';
+        }
+
+        // Визит (с GPS и запросом фото через бота)
+        window.startVisit = function(idx) {
+            document.getElementById('loading').style.display = 'flex';
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const coords = pos.coords.latitude + "," + pos.coords.longitude;
+                // Передаем данные боту, чтобы он запросил фото
+                tg.sendData(JSON.stringify({
+                    type: 'visit_start',
+                    client: filtered[idx],
+                    coords: coords
+                }));
+            }, (err) => {
+                alert("Ошибка GPS");
+                document.getElementById('loading').style.display = 'none';
+            }, { enableHighAccuracy: true });
         }
 
         document.getElementById('search').oninput = render;
