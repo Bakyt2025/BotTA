@@ -9,33 +9,33 @@
         :root {
             --bg: #ffffff;
             --item-bg: #f9f9fb;
-            --accent: #34c759; /* Зеленый для товаров */
+            --accent: #34c759;
         }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 0; padding-bottom: 80px; }
         .header { padding: 15px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
         .client-header { background: #e5f1f6; padding: 10px 15px; font-size: 14px; font-weight: 500; display: flex; justify-content: space-between; }
         .search-container { padding: 10px 15px; }
-        .search { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f2f2f7; outline: none; }
+        .search { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f2f2f7; outline: none; box-sizing: border-box; }
         
         .product-item { 
             display: flex; justify-content: space-between; align-items: center;
             padding: 15px; border-bottom: 1px solid #f2f2f7;
         }
-        .p-name { font-weight: 500; font-size: 15px; margin-bottom: 4px; }
+        .p-name { font-weight: 500; font-size: 15px; margin-bottom: 4px; padding-right: 10px; }
         .p-price { color: #007aff; font-weight: bold; }
         .p-stock { font-size: 12px; color: #8e8e93; }
 
-        .controls { display: flex; align-items: center; gap: 12px; }
+        .controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         .btn { 
-            width: 32px; height: 32px; border-radius: 50%; border: none; 
-            background: #e9e9eb; font-size: 20px; cursor: pointer; 
+            width: 36px; height: 36px; border-radius: 50%; border: none; 
+            background: #e9e9eb; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
         .btn-plus { background: var(--accent); color: white; }
-        .count { font-weight: 600; min-width: 20px; text-align: center; }
+        .count { font-weight: 600; min-width: 24px; text-align: center; font-size: 16px; }
 
         .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; 
-            background: white; border-top: 1px solid #eee; display: none;
+            position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; 
+            background: white; border-top: 1px solid #eee; display: none; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
         }
         .btn-order { 
             width: 100%; padding: 16px; background: var(--accent); color: white; 
@@ -46,8 +46,8 @@
 <body>
 
 <div class="client-header">
-    <span id="client-name">Загрузка клиента...</span>
-    <a href="Kontragenty.html" style="color: #007aff; text-decoration: none;">Сменить</a>
+    <span id="client-name">Загрузка...</span>
+    <a href="Kontragenty.html" style="color: #007aff; text-decoration: none;">Сменить клиента</a>
 </div>
 
 <div class="search-container">
@@ -62,8 +62,9 @@
 
 <script>
     let tg = window.Telegram.WebApp;
-    let products = [];
-    let cart = {};
+    let allProducts = []; // Все товары из базы
+    let filteredProducts = []; // Товары, которые видны сейчас (после поиска)
+    let cart = {}; // Корзина: { "Название товара": количество }
     let client = JSON.parse(localStorage.getItem('selectedClient'));
 
     if (!client) {
@@ -76,67 +77,87 @@
         try {
             const response = await fetch('data.json');
             const data = await response.json();
-            products = data.products;
+            allProducts = data.products;
             render();
-        } catch (e) { console.error("Ошибка товаров"); }
+        } catch (e) { 
+            document.getElementById('catalog').innerText = "Ошибка загрузки данных.";
+        }
     }
 
     function render() {
         const term = document.getElementById('search').value.toLowerCase();
         const container = document.getElementById('catalog');
         container.innerHTML = '';
+        
+        // Фильтруем список
+        filteredProducts = allProducts.filter(p => p.name.toLowerCase().includes(term));
 
-        products.forEach((p, idx) => {
-            if (p.name.toLowerCase().includes(term)) {
-                const div = document.createElement('div');
-                div.className = 'product-item';
-                div.innerHTML = `
-                    <div>
-                        <div class="p-name">${p.name}</div>
-                        <div class="p-price">${p.price} сом <span class="p-stock">/ ост: ${p.stock}</span></div>
-                    </div>
-                    <div class="controls">
-                        <button class="btn" onclick="updateQty('${p.name}', -1)">-</button>
-                        <span class="count" id="q-${p.name}">${cart[p.name] || 0}</span>
-                        <button class="btn btn-plus" onclick="updateQty('${p.name}', 1)">+</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            }
+        filteredProducts.forEach((p, idx) => {
+            const div = document.createElement('div');
+            div.className = 'product-item';
+            // Используем idx (индекс) для ID элементов, чтобы избежать проблем с кавычками в названиях
+            div.innerHTML = `
+                <div style="flex: 1;">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price} сом <span class="p-stock">/ ост: ${p.stock || 0}</span></div>
+                </div>
+                <div class="controls">
+                    <button class="btn" onclick="updateQty(${idx}, -1)">-</button>
+                    <span class="count" id="q-${idx}">${cart[p.name] || 0}</span>
+                    <button class="btn btn-plus" onclick="updateQty(${idx}, 1)">+</button>
+                </div>
+            `;
+            container.appendChild(div);
         });
     }
 
-    function updateQty(name, delta) {
-        cart[name] = (cart[name] || 0) + delta;
-        if (cart[name] <= 0) delete cart[name];
-        
-        let el = document.getElementById('q-' + name);
-        if (el) el.innerText = cart[name] || 0;
+    function updateQty(idx, delta) {
+        const product = filteredProducts[idx];
+        const name = product.name;
+
+        if (!cart[name]) cart[name] = 0;
+        cart[name] += delta;
+
+        if (cart[name] <= 0) {
+            delete cart[name];
+        }
+
+        // Обновляем цифру на экране
+        const countEl = document.getElementById('q-' + idx);
+        if (countEl) {
+            countEl.innerText = cart[name] || 0;
+        }
         
         updateFooter();
     }
 
     function updateFooter() {
         let total = 0;
-        let count = 0;
-        products.forEach(p => {
-            if (cart[p.name]) {
-                total += cart[p.name] * p.price;
-                count++;
+        let hasItems = false;
+
+        // Считаем сумму по всей корзине
+        for (let name in cart) {
+            const prod = allProducts.find(p => p.name === name);
+            if (prod) {
+                total += cart[name] * prod.price;
+                hasItems = true;
             }
-        });
+        }
         
-        document.getElementById('footer').style.display = count > 0 ? 'block' : 'none';
+        document.getElementById('footer').style.display = hasItems ? 'block' : 'none';
         document.getElementById('total-sum').innerText = Math.round(total);
     }
 
     function sendOrder() {
+        if (Object.keys(cart).length === 0) return;
+
         const orderData = {
             client: client,
             items: cart,
             total: document.getElementById('total-sum').innerText,
             timestamp: new Date().toLocaleString()
         };
+        
         tg.sendData(JSON.stringify(orderData));
         tg.close();
     }
