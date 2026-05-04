@@ -5261,6 +5261,18 @@
             "address": "Ленина 745",
             "phone": "",
             "coords": "0,0"
+        },
+        {
+            "name": "Маша",
+            "address": "Ул Ленина 745",
+            "phone": "",
+            "coords": "0,0"
+        },
+        {
+            "name": "Миша",
+            "address": "Ленина 56",
+            "phone": "",
+            "coords": "0,0"
         }
     ],
     "products": [
