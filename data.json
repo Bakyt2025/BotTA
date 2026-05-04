@@ -1,0 +1,4 @@
+{
+  "clients": [{"name": "Магазин", "address": "...", "coords": "..."}],
+  "products": [{"name": "Аджика", "price": 100, "stock": 50}]
+}
