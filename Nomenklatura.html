@@ -8,180 +8,92 @@
     <style>
         :root { --accent: #34c759; }
         body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding-bottom: 100px; color: #1c1c1e; }
-        
-        .header { 
-            background: #e5f1f6; padding: 12px 15px; font-weight: 600; 
-            position: sticky; top: 0; z-index: 10; display: flex; 
-            justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; 
-        }
-        .back-link { color: #007aff; text-decoration: none; font-size: 14px; font-weight: 400; }
-
-        .search-container { padding: 10px 15px; background: #fff; }
-        .search-input { 
-            width: 100%; padding: 12px; border-radius: 10px; border: none; 
-            background: #f2f2f7; outline: none; box-sizing: border-box; font-size: 16px; 
-        }
-
-        .product-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px; border-bottom: 1px solid #f2f2f7; 
-        }
-        .p-info { flex: 1; padding-right: 10px; }
-        .p-name { font-weight: 500; font-size: 15px; margin-bottom: 3px; }
-        .p-price { color: #007aff; font-weight: 700; font-size: 14px; }
-
+        .header { background: #e5f1f6; padding: 12px 15px; font-weight: 600; position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+        .search-box { padding: 10px 15px; }
+        .search { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #f2f2f7; outline: none; box-sizing: border-box; font-size: 16px; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f2f2f7; }
         .controls { display: flex; align-items: center; gap: 15px; }
-        .btn { 
-            width: 40px; height: 40px; border-radius: 50%; border: none; 
-            background: #e9e9eb; font-size: 24px; display: flex; 
-            align-items: center; justify-content: center; cursor: pointer; 
-        }
+        .btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #e9e9eb; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-plus { background: var(--accent); color: white; }
-        .qty-label { min-width: 24px; text-align: center; font-weight: 700; font-size: 18px; }
-
-        .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; 
-            background: rgba(255, 255, 255, 0.95); border-top: 1px solid #eee; 
-            display: none; z-index: 20; 
-        }
-        .btn-send { 
-            width: 100%; padding: 16px; background: var(--accent); color: white; 
-            border: none; border-radius: 14px; font-size: 18px; font-weight: 600; 
-        }
+        .q { min-width: 24px; text-align: center; font-weight: bold; font-size: 18px; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: white; border-top: 1px solid #eee; display: none; }
+        .btn-send { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: 600; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <span id="client-name">Загрузка...</span>
-        <a href="Kontragenty.html" class="back-link">Назад</a>
-    </div>
-
-    <div class="search-container">
-        <input type="text" id="search" class="search-input" placeholder="🔍 Поиск товара...">
-    </div>
-
+    <div class="header"><span id="c-name">Загрузка...</span><a href="Kontragenty.html" style="color:#007aff; text-decoration:none; font-weight:400;">Назад</a></div>
+    <div class="search-box"><input type="text" id="search" placeholder="🔍 Поиск товара..." class="search"></div>
     <div id="catalog"><p style="text-align:center; padding:20px; color:#888;">Загрузка товаров...</p></div>
-
-    <div id="footer" class="footer">
-        <button class="btn-send" id="order-btn" onclick="sendOrderToBot()">
-            Оформить на <span id="total-sum">0</span> сом
-        </button>
-    </div>
+    <div id="footer" class="footer"><button class="btn-send" onclick="send()">Заказать: <span id="total">0</span> сом</button></div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand();
+    let products = []; let cart = {};
+    const params = new URLSearchParams(window.location.search);
+    
+    // Получаем клиента из URL (после Визита) или из памяти
+    let client = params.has('name') ? {name: params.get('name'), currentCoords: params.get('geo') || "0,0"} : JSON.parse(localStorage.getItem('selectedClient'));
 
-    let allProducts = []; 
-    let cart = {}; 
+    if (!client) { location.href = 'Kontragenty.html'; } 
+    else { document.getElementById('c-name').innerText = (client.currentCoords && client.currentCoords !== "0,0" ? "📍 " : "📞 ") + client.name; }
 
-    // Получаем данные клиента и КООРДИНАТЫ (если они были переданы)
-    const urlParams = new URLSearchParams(window.location.search);
-    let client = null;
-
-    if (urlParams.has('name')) {
-        client = { 
-            name: urlParams.get('name'),
-            currentCoords: urlParams.get('geo') || "0,0" 
-        };
-        localStorage.setItem('selectedClient', JSON.stringify(client));
-    } else {
-        client = JSON.parse(localStorage.getItem('selectedClient'));
-    }
-
-    if (!client) {
-        window.location.href = 'Kontragenty.html';
-    } else {
-        // Показываем значок GPS в шапке, если визит подтвержден
-        let geoIcon = (client.currentCoords && client.currentCoords !== "0,0") ? "📍 " : "📞 ";
-        document.getElementById('client-name').innerText = geoIcon + client.name;
-    }
-
-    async function loadProducts() {
+    async function load() {
         try {
-            const response = await fetch('data.json?v=' + Date.now());
-            const data = await response.json();
-            allProducts = data.products || [];
-            renderCatalog();
-        } catch (e) {
-            document.getElementById('catalog').innerHTML = '<div style="color:red; text-align:center; padding:20px;">Ошибка загрузки.</div>';
-        }
+            const r = await fetch('data.json?v=' + Date.now());
+            const d = await r.json();
+            products = d.products || [];
+            render();
+        } catch (e) { document.getElementById('catalog').innerHTML = '<p style="color:red; text-align:center;">Ошибка загрузки</p>'; }
     }
 
-    function renderCatalog() {
-        const term = document.getElementById('search').value.toLowerCase();
-        const container = document.getElementById('catalog');
-        container.innerHTML = '';
-
-        allProducts.forEach((p, index) => {
-            if (p.name.toLowerCase().includes(term)) {
-                const div = document.createElement('div');
-                div.className = 'product-item';
-                div.innerHTML = `
-                    <div class="p-info">
-                        <div class="p-name">${p.name}</div>
-                        <div class="p-price">${p.price} сом</div>
-                    </div>
+    function render() {
+        const t = document.getElementById('search').value.toLowerCase();
+        const cont = document.getElementById('catalog');
+        cont.innerHTML = '';
+        products.forEach((p, idx) => {
+            if (p.name.toLowerCase().includes(t)) {
+                const d = document.createElement('div');
+                d.className = 'item';
+                d.innerHTML = `<div><b>${p.name}</b><br>${p.price} сом</div>
                     <div class="controls">
-                        <button class="btn" onclick="updateQty(${index}, -1)">-</button>
-                        <span class="qty-label" id="q-${index}">${cart[p.name] ? cart[p.name].qty : 0}</span>
-                        <button class="btn btn-plus" onclick="updateQty(${index}, 1)">+</button>
-                    </div>
-                `;
-                container.appendChild(div);
+                        <button class="btn" onclick="upd(${idx}, -1)">-</button>
+                        <span class="q" id="q-${idx}">${cart[p.name] ? cart[p.name].qty : 0}</span>
+                        <button class="btn btn-plus" onclick="upd(${idx}, 1)">+</button>
+                    </div>`;
+                cont.appendChild(d);
             }
         });
     }
 
-    window.updateQty = function(idx, delta) {
-        const p = allProducts[idx];
+    window.upd = function(idx, delta) {
+        const p = products[idx];
         if (!cart[p.name]) cart[p.name] = { qty: 0, price: p.price };
-        
         cart[p.name].qty += delta;
         if (cart[p.name].qty <= 0) delete cart[p.name];
         
-        const label = document.getElementById('q-' + idx);
-        if (label) label.innerText = cart[p.name] ? cart[p.name].qty : 0;
+        const el = document.getElementById('q-' + idx);
+        if (el) el.innerText = cart[p.name] ? cart[p.name].qty : 0;
         
-        updateFooter();
-    }
-
-    function updateFooter() {
-        let total = 0;
-        for (let key in cart) { total += cart[key].qty * cart[key].price; }
-
-        const footer = document.getElementById('footer');
-        if (total > 0) {
-            footer.style.display = 'block';
-            document.getElementById('total-sum').innerText = Math.round(total);
-        } else {
-            footer.style.display = 'none';
-        }
-    }
-
-window.sendOrderToBot = function() {
-    if (Object.keys(cart).length === 0) return;
-
-    // Блокируем кнопку
-    document.getElementById('order-btn').disabled = true;
-
-    // Получаем клиента из памяти
-    const clientData = JSON.parse(localStorage.getItem('selectedClient'));
-
-    const result = {
-        client: clientData,
-        items: cart,
-        total: document.getElementById('total-sum').innerText,
-        coords: (clientData && clientData.currentCoords) ? clientData.currentCoords : "0,0"
+        let sum = 0;
+        for (let n in cart) { sum += cart[n].qty * cart[n].price; }
+        document.getElementById('footer').style.display = sum > 0 ? 'block' : 'none';
+        document.getElementById('total').innerText = Math.round(sum);
     };
 
-    tg.sendData(JSON.stringify(result));
-    tg.close();
-}
+    window.send = function() {
+        if (Object.keys(cart).length === 0) return;
+        tg.sendData(JSON.stringify({
+            client: client,
+            items: cart,
+            total: document.getElementById('total').innerText,
+            coords: client.currentCoords || "0,0"
+        }));
+        tg.close();
+    }
 
-    document.getElementById('search').oninput = renderCatalog;
-    loadProducts();
+    document.getElementById('search').oninput = render;
+    load();
+    setTimeout(() => { if (products.length === 0) load(); }, 1500);
 </script>
 </body>
 </html>
