@@ -66,12 +66,11 @@
             text-align: center;
             color: inherit;
         }
-        /* добавлено: стили для поиска */
         .search-container {
             padding: 8px 16px;
             background: inherit;
             position: sticky;
-            top: 70px; /* под заголовком */
+            top: 70px;
             z-index: 40;
             background: var(--glass-bg);
             backdrop-filter: saturate(180%) blur(20px);
@@ -203,7 +202,6 @@
     <header class="page-header">
         <h2>Каталог: Базар-Коргон</h2>
     </header>
-    <!-- добавлено: контейнер поиска -->
     <div class="search-container">
         <input type="text" id="search-input" placeholder="🔍 Поиск товара...">
     </div>
@@ -214,104 +212,121 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // СПИСОК ТОВАРОВ БАЗАР-КОРГОН С ЦЕНАМИ
-const products = [
-    { name: "Аджика 0,43л. ст/б", price: 212.00 },
-    { name: "Ассорти в томатном ске 1л 1*6", price: 212.00 },
-    { name: "КHABIB Мохито 0,45л", price: 70.00 },
-    { name: "КHABIB Энергетик 0.45л", price: 75.00 },
-    { name: "КHABIB Энергетик канталупа 0.45л", price: 78.00 },
-    { name: "Квас Деревенский 0,9 л", price: 46.00 },
-    { name: "Квас Деревенский 2,9 л", price: 110.00 },
-    { name: "Компот из персика 3л ст/б", price: 320.00 },
-    { name: "Лапша Мампар № 14 450 гр", price: 90.00 },
-    { name: "Лапша масляная № 10 270 гр", price: 80.00 },
-    { name: "Лапша Плоская яичная 1 кг.", price: 190.00 },
-    { name: "Лапша плоский № 06 700 гр", price: 80.00 },
-    { name: "Лапша простая № 01 700 гр", price: 80.00 },
-    { name: "Лапша простая № 02 700 гр", price: 80.00 },
-    { name: "Лапша тонкий № 13 500 гр", price: 93.00 },
-    { name: "Лапша Элсуйор Бешбармак № 09 450 гр", price: 90.00 },
-    { name: "Лапша яичная 1 кг.", price: 190.00 },
-    { name: "Лапша яичная № 03 250 гр", price: 66.00 },
-    { name: "Лапша яичная № 04 700 гр", price: 80.00 },
-    { name: "Лапша яичная № 07 тонкая 250 гр", price: 66.00 },
-    { name: "Лапша яичная № 08 тонкая 210 гр", price: 66.00 },
-    { name: "Лапша яичная № 12 тонкая 270 гр", price: 80.00 },
-    { name: "Лапша яичная № 15 500 гр", price: 93.00 },
-    { name: "Лимонад Дюшес 0,9 л", price: 46.00 },
-    { name: "Лимонад Дюшес 2,9 л", price: 115.00 },
-    { name: "Напиток газированный АНАР деревенский 0,9 л", price: 46.00 },
-    { name: "Напиток газированный АНАР деревенский 2,9 л", price: 115.00 },
-    { name: "Напиток сокосодержащий GULLUG Гранат 1,0л", price: 96.00 },
-    { name: "Напиток сокосодержащий GULLUG Черная смородина 1,0", price: 96.00 },
-    { name: "Салат \"Овощной\" 1л", price: 212.00 },
-    { name: "Сок Деревенский Вишня 4,9 л", price: 130.00 },
-    { name: "Сок Деревенский Гранат 4,9 л", price: 130.00 },
-    { name: "Сок Деревенский Мультивитамин 4,9 л", price: 130.00 },
-    { name: "Сокосодержащий напиток \"Blackcurrant juice\" 0,5", price: 60.00 },
-    { name: "Сокосодержащий напиток \"Melon juice\" дыня 0,5 л", price: 60.00 },
-    { name: "Сокосодержащий напиток \"Pomegranate\" гранат 0,5", price: 60.00 },
-    { name: "Томтный сок 3л", price: 320.00 }
-];
-        let cart = {}; 
+        // ОБНОВЛЕННЫЙ СПИСОК ТОВАРОВ
+        const products = [
+            { name: "Аджика 0,43л. ст/б", price: 212.00 },
+            { name: "Ассорти в томатном ске 1л 1*6", price: 212.00 },
+            { name: "КHABIB Мохито 0,45л", price: 70.00 },
+            { name: "КHABIB Энергетик 0.45л", price: 75.00 },
+            { name: "КHABIB Энергетик канталупа 0.45л", price: 78.00 },
+            { name: "Квас Деревенский 0,9 л", price: 46.00 },
+            { name: "Квас Деревенский 2,9 л", price: 110.00 },
+            { name: "Компот из персика 3л ст/б", price: 320.00 },
+            { name: "Лапша Мампар № 14 450 гр", price: 90.00 },
+            { name: "Лапша масляная № 10 270 гр", price: 80.00 },
+            { name: "Лапша Плоская яичная 1 кг.", price: 190.00 },
+            { name: "Лапша плоский № 06 700 гр", price: 80.00 },
+            { name: "Лапша простая № 01 700 гр", price: 80.00 },
+            { name: "Лапша простая № 02 700 гр", price: 80.00 },
+            { name: "Лапша тонкий № 13 500 гр", price: 93.00 },
+            { name: "Лапша Элсуйор Бешбармак № 09 450 гр", price: 90.00 },
+            { name: "Лапша яичная 1 кг.", price: 190.00 },
+            { name: "Лапша яичная № 03 250 гр", price: 66.00 },
+            { name: "Лапша яичная № 04 700 гр", price: 80.00 },
+            { name: "Лапша яичная № 07 тонкая 250 гр", price: 66.00 },
+            { name: "Лапша яичная № 08 тонкая 210 гр", price: 66.00 },
+            { name: "Лапша яичная № 12 тонкая 270 гр", price: 80.00 },
+            { name: "Лапша яичная № 15 500 гр", price: 93.00 },
+            { name: "Лимонад Дюшес 0,9 л", price: 46.00 },
+            { name: "Лимонад Дюшес 2,9 л", price: 115.00 },
+            { name: "Напиток газированный АНАР деревенский 0,9 л", price: 46.00 },
+            { name: "Напиток газированный АНАР деревенский 2,9 л", price: 115.00 },
+            { name: "Напиток негаз. Кувшин Абрикос 1.8л", price: 95.00 },
+            { name: "Напиток негаз. Кувшин Гранат-Ежевика 1.8л", price: 95.00 },
+            { name: "Напиток негаз. Кувшин Персик 1.8л", price: 95.00 },
+            { name: "Напиток негаз. Кувшин Тропик 1.8л", price: 95.00 },
+            { name: "Напиток негаз. Кувшин Яблоко 1.8л", price: 95.00 },
+            { name: "Напиток негаз. Кувшинчик Клубника 0.5л", price: 44.00 },
+            { name: "Напиток негаз. Кувшинчик Нежное манго 0.5л", price: 44.00 },
+            { name: "Напиток негаз. Кувшинчик Персик 0.5л", price: 44.00 },
+            { name: "Напиток негаз. Кувшинчик Сладкий арбуз 0.5л", price: 44.00 },
+            { name: "Напиток негаз. Кувшинчик Тропик 0.5л", price: 44.00 },
+            { name: "Напиток негаз. Кувшинчик Яблоко 0.5л", price: 44.00 },
+            { name: "Напиток негаз. ОК Абрикос 0.2л", price: 44.00 },
+            { name: "Напиток негаз. ОК Абрикос 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Апельсин 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Вишня 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Гранат-Яблоко 0.2л", price: 44.00 },
+            { name: "Напиток негаз. ОК Гранат-Яблоко 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Мультифрукт 0.2л", price: 44.00 },
+            { name: "Напиток негаз. ОК Мультифрукт 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Персик 0.2л", price: 44.00 },
+            { name: "Напиток негаз. ОК Персик 0.93л", price: 105.00 },
+            { name: "Напиток негаз. ОК Яблоко 0.2л", price: 44.00 },
+            { name: "Напиток негаз. ОК Яблоко 0.93л", price: 105.00 },
+            { name: "Напиток сокосодержащий GULLUG Гранат 1,0л", price: 96.00 },
+            { name: "Напиток сокосодержащий GULLUG Черная смородина 1,0", price: 96.00 },
+            { name: "Салат \"Овощной\" 1л", price: 212.00 },
+            { name: "Сок Деревенский Вишня 4,9 л", price: 130.00 },
+            { name: "Сок Деревенский Гранат 4,9 л", price: 130.00 },
+            { name: "Сок Деревенский Мультивитамин 4,9 л", price: 130.00 },
+            { name: "Сокосодержащий напиток \"Blackcurrant juice\" 0,5", price: 60.00 },
+            { name: "Сокосодержащий напиток \"Cantaloupe juice\" 0,5", price: 60.00 },
+            { name: "Сокосодержащий напиток \"Melon juice\" дыня 0,5 л", price: 60.00 },
+            { name: "Сокосодержащий напиток \"Pomegranate\" гранат 0,5", price: 60.00 },
+            { name: "Томтный сок 3л", price: 320.00 }
+        ];
 
+        let cart = {}; 
         const catalogDiv = document.getElementById('catalog');
 
-        products.forEach((p, index) => {
-            const div = document.createElement('div');
-            div.className = 'item';
-            div.innerHTML = `
-                <div class="info">
-                    <div class="name">${p.name}</div>
-                    <div class="price">${p.price} сом</div>
-                </div>
-                <div class="controls">
-                    <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
-                    <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
-                    <span class="count" id="count-${index}">0</span>
-                    <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
-                    <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+</button>
-                </div>
-            `;
-            catalogDiv.appendChild(div);
-        });
+        function renderCatalog() {
+            catalogDiv.innerHTML = '';
+            products.forEach((p, index) => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <div class="info">
+                        <div class="name">${p.name}</div>
+                        <div class="price">${p.price} сом</div>
+                    </div>
+                    <div class="controls">
+                        <button class="btn-ctrl btn-clear" onclick="setQty(${index}, 0)">x</button>
+                        <button class="btn-ctrl btn-minus" onclick="changeQty(${index}, -1)">−</button>
+                        <span class="count" id="count-${index}">${cart[p.name] || 0}</span>
+                        <button class="btn-ctrl btn-plus1" onclick="changeQty(${index}, 1)">+</button>
+                        <button class="btn-ctrl btn-plus10" onclick="changeQty(${index}, 10)">+</button>
+                    </div>
+                `;
+                catalogDiv.appendChild(div);
+            });
+        }
 
-        // добавлено: фильтрация по поиску
         const searchInput = document.getElementById('search-input');
         function filterCatalog() {
             const term = searchInput.value.toLowerCase();
             const items = document.querySelectorAll('#catalog .item');
             items.forEach(item => {
-                const nameEl = item.querySelector('.name');
-                const name = nameEl ? nameEl.innerText.toLowerCase() : '';
-                if (term === '' || name.includes(term)) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
+                const name = item.querySelector('.name').innerText.toLowerCase();
+                item.style.display = name.includes(term) ? '' : 'none';
             });
         }
         searchInput.addEventListener('input', filterCatalog);
 
-        function changeQty(index, delta) {
+        window.changeQty = function(index, delta) {
             const p = products[index];
-            const name = p.name;
-            cart[name] = (cart[name] || 0) + delta;
-            if (cart[name] < 0) cart[name] = 0;
-            const countEl = document.getElementById(`count-${index}`);
-            if (countEl) countEl.innerText = cart[name];
+            cart[p.name] = (cart[p.name] || 0) + delta;
+            if (cart[p.name] < 0) cart[p.name] = 0;
+            document.getElementById(`count-${index}`).innerText = cart[p.name];
             updateSendButton();
-        }
+        };
 
-        function setQty(index, value) {
+        window.setQty = function(index, value) {
             const p = products[index];
-            const name = p.name;
-            cart[name] = value;
-            const countEl = document.getElementById(`count-${index}`);
-            if (countEl) countEl.innerText = cart[name];
+            cart[p.name] = value;
+            document.getElementById(`count-${index}`).innerText = cart[p.name];
             updateSendButton();
-        }
+        };
 
         function updateSendButton() {
             const hasItems = Object.values(cart).some(q => q > 0);
@@ -339,6 +354,8 @@ const products = [
             tg.sendData(JSON.stringify({ items: orderItems }));
             tg.close();
         });
+
+        renderCatalog();
     </script>
 </body>
 </html>
