@@ -2,54 +2,196 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Маршрут Экспедитора</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Маршрутный лист</title>
+    <!-- Подключаем скрипт Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 15px; margin: 0; }
-        .header { text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 1.2em; }
-        .card { 
-            background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 6px solid #0088cc;
+        :root {
+            --tg-theme-bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --accent-color: #0088cc;
+            --success-color: #34c759;
+            --text-main: #1c1e21;
+            --text-sub: #8e8e93;
+            --price-color: #d32f2f;
         }
-        .shop-name { font-size: 1.1em; font-weight: bold; color: #0088cc; margin-bottom: 8px; }
-        .info { font-size: 0.9em; color: #555; margin: 4px 0; }
-        .amount { color: #d32f2f; font-weight: bold; }
-        .btn-map { 
-            display: block; text-align: center; background: #34a853; color: white; 
-            text-decoration: none; padding: 12px; border-radius: 8px; margin-top: 10px; font-weight: bold; 
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            margin: 0;
+            padding: 10px;
+            color: var(--text-main);
+            -webkit-user-select: none;
+        }
+
+        .header {
+            text-align: center;
+            margin: 15px 0 20px 0;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        #list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 6px solid var(--accent-color);
+            position: relative;
+        }
+
+        .shop-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            display: block;
+            line-height: 1.3;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .label {
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        .value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .amount-val {
+            color: var(--price-color);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .btn-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--success-color);
+            color: white;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            gap: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-navigation:active {
+            opacity: 0.7;
+        }
+
+        .loader {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-sub);
+        }
+
+        /* Стиль для пустых данных */
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-sub);
         }
     </style>
 </head>
 <body>
-    <div id="date-header" class="header">Загрузка данных...</div>
-    <div id="list"></div>
+
+    <div id="date-header" class="header">Загрузка...</div>
+    
+    <div id="list-container">
+        <div class="loader">Получение данных из маршрута...</div>
+    </div>
 
     <script>
-        // Добавляем случайный параметр, чтобы избежать кэширования GitHub
-        const jsonUrl = 'https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor_route.json?nocache=' + Math.random();
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем на все окно
 
-        fetch(jsonUrl)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('date-header').innerText = data.date;
-                const container = document.getElementById('list');
+        // Ссылка на ваш JSON файл на GitHub
+        const JSON_URL = 'https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor.json';
+
+        async function loadRoute() {
+            const container = document.getElementById('list-container');
+            const dateHeader = document.getElementById('date-header');
+
+            try {
+                // Добавляем timestamp для обхода кэша GitHub
+                const response = await fetch(`${JSON_URL}?nocache=${Date.now()}`);
+                if (!response.ok) throw new Error('Ошибка загрузки файла');
                 
-                data.shops.forEach(shop => {
+                const data = await response.json();
+
+                // Устанавливаем заголовок из JSON
+                dateHeader.innerText = data.date || "Маршрутный лист";
+
+                if (!data.shops || data.shops.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">В маршрутном листе пока нет магазинов.</div>';
+                    return;
+                }
+
+                container.innerHTML = ''; // Очищаем лоадер
+
+                data.shops.forEach((shop, index) => {
                     const card = document.createElement('div');
                     card.className = 'card';
+                    
+                    // Формируем URL для Google Карт
+                    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${shop.coords}`;
+
                     card.innerHTML = `
-                        <div class="shop-name">${shop.name}</div>
-                        <div class="info">🧾 Накладная: <b>${shop.invoice}</b></div>
-                        <div class="info">💰 Сумма: <span class="amount">${shop.amount}</span></div>
-                        <a class="btn-map" href="https://www.google.com/maps/search/?api=1&query=${shop.coords}">📍 В ПУТЬ (Карта)</a>
+                        <span class="shop-name">${index + 1}. ${shop.name}</span>
+                        
+                        <div class="info-row">
+                            <span class="label">📄 Накладная:</span>
+                            <span class="value">${shop.invoice}</span>
+                        </div>
+                        
+                        <div class="info-row">
+                            <span class="label">💰 Сумма:</span>
+                            <span class="value amount-val">${shop.amount} сом</span>
+                        </div>
+
+                        <a href="${googleMapsUrl}" class="btn-navigation" target="_blank">
+                            📍 В ПУТЬ (КАРТА)
+                        </a>
                     `;
                     container.appendChild(card);
                 });
-            })
-            .catch(err => {
-                document.getElementById('date-header').innerText = "Ошибка загрузки маршрута";
-                console.error(err);
-            });
+
+            } catch (error) {
+                console.error(error);
+                dateHeader.innerText = "Ошибка";
+                container.innerHTML = `<div class="empty-msg">Не удалось загрузить данные из expeditor.json.<br>Проверьте, обновил ли бот файл на GitHub.</div>`;
+            }
+        }
+
+        // Запуск функции
+        loadRoute();
+
+        // Сообщаем Телеграму, что приложение готово
+        tg.ready();
     </script>
 </body>
 </html>
