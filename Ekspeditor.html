@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Экспедитор</title>
+    <!-- Подключаем скрипт Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -13,38 +14,56 @@
             --hint: var(--tg-theme-hint-color, #777);
             --link: var(--tg-theme-link-color, #248bcf);
         }
-        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; }
+        body { font-family: sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; -webkit-user-select: none; }
         .header { text-align: center; margin-bottom: 15px; }
         .header h2 { margin: 0; font-size: 18px; }
         .update-time { font-size: 11px; color: var(--hint); }
         .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.05); }
-        .name { font-weight: bold; font-size: 17px; margin-bottom: 8px; color: var(--link); }
+        .name { font-weight: bold; font-size: 16px; margin-bottom: 8px; color: var(--link); line-height: 1.3; }
         .row { display: flex; justify-content: space-between; font-size: 14px; margin: 4px 0; }
-        .btn { display: block; background: #31b545; color: white; text-align: center; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 10px; border: none; width: 100%; cursor: pointer; }
-        #loader { text-align: center; margin-top: 50px; }
+        .label { color: var(--hint); }
+        .btn { 
+            display: block; 
+            background: #31b545; 
+            color: white; 
+            text-align: center; 
+            padding: 14px; 
+            border-radius: 10px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-top: 10px; 
+            border: none; 
+            width: 100%; 
+            font-size: 14px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active { background: #289639; transform: scale(0.98); }
+        #loader { text-align: center; margin-top: 50px; color: var(--hint); }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h2 id="sheet-date">Загрузка...</h2>
+    <h2 id="sheet-date">Загрузка маршрута...</h2>
     <div id="update-time" class="update-time"></div>
 </div>
 
-<div id="loader">Ожидание данных из GitHub...</div>
+<div id="loader">Синхронизация с данными GitHub...</div>
 <div id="content"></div>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); // Развернуть окно на весь экран
+    tg.ready();
 
     async function loadData() {
-        // Параметр v=... предотвращает кэширование данных
+        // Добавляем timestamp для обхода кэша
         const url = `https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor.json?v=${Date.now()}`;
         
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error("Файл JSON не найден на сервере.");
+            if (!response.ok) throw new Error("Файл не найден");
             const data = await response.json();
             
             document.getElementById('loader').style.display = 'none';
@@ -59,23 +78,36 @@
                 card.className = 'card';
                 card.innerHTML = `
                     <div class="name">${shop.name}</div>
-                    <div class="row"><span>Накладная:</span> <b>${shop.invoice}</b></div>
-                    <div class="row"><span>Сумма:</span> <b style="color:#31b545">${shop.amount} сом</b></div>
+                    <div class="row">
+                        <span class="label">Накладная:</span> 
+                        <b>№${shop.invoice}</b>
+                    </div>
+                    <div class="row">
+                        <span class="label">Сумма к оплате:</span> 
+                        <b style="color:#31b545">${shop.amount} сом</b>
+                    </div>
                     <button class="btn" onclick="openMap('${shop.coords}')">📍 В ПУТЬ</button>
                 `;
                 container.appendChild(card);
             });
         } catch (err) {
-            document.getElementById('loader').innerHTML = `<p style="color:red"><b>Ошибка:</b><br>${err.message}<br><br>Сначала нажмите "Обновить данные" в боте.</p>`;
+            document.getElementById('loader').innerHTML = 
+                `<p style="color:red"><b>Ошибка загрузки данных</b><br>Убедитесь, что вы обновили данные в боте.</p>`;
         }
     }
 
     function openMap(coords) {
-        if (!coords || coords === "0,0") {
-            alert("Координаты для этого магазина не указаны.");
+        if (!coords || coords === "0,0" || coords.length < 5) {
+            tg.showAlert("Координаты для этого магазина не найдены.");
             return;
         }
-        window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+        
+        // Убираем лишние пробелы, если они есть
+        const cleanCoords = coords.trim();
+        const googleUrl = `https://www.google.com/maps/search/?api=1&query=${cleanCoords}`;
+        
+        // ИСПОЛЬЗУЕМ МЕТОД TELEGRAM ДЛЯ ВНЕШНИХ ССЫЛОК
+        tg.openLink(googleUrl);
     }
 
     loadData();
