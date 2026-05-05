@@ -13,21 +13,30 @@
         .info-area { flex: 1; padding: 12px; cursor: pointer; position: relative; }
         .name { font-weight: 600; font-size: 15px; color: #1c1c1e; padding-right: 25px; line-height: 1.3; }
         .status { position: absolute; right: 10px; top: 15px; font-size: 16px; }
+        #loading-overlay { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; font-weight: bold; }
     </style>
 </head>
 <body>
+    <div id="loading-overlay">⏳ Получение GPS...</div>
     <input type="text" id="search" class="search" placeholder="🔍 Поиск магазина...">
     <div id="list"></div>
     <script>
-        let tg = window.Telegram.WebApp; let clients = [];
+        let tg = window.Telegram.WebApp; let clients = []; let filtered = [];
         async function load() {
-            const r = await fetch('data.json?v=' + Date.now());
-            const d = await r.json(); clients = d.clients || []; render();
+            try {
+                const r = await fetch('data.json?v=' + Date.now());
+                const d = await r.json(); 
+                clients = d.clients || [];
+                // СОРТИРОВКА НА ТЕЛЕФОНЕ
+                clients.sort((a, b) => a.name.localeCompare(b.name));
+                render();
+            } catch (e) { document.getElementById('list').innerText = "Ошибка загрузки данных."; }
         }
         function render() {
             const term = document.getElementById('search').value.toLowerCase();
             const cont = document.getElementById('list'); cont.innerHTML = '';
-            clients.filter(c => c.name.toLowerCase().includes(term)).forEach((c, idx) => {
+            filtered = clients.filter(c => c.name.toLowerCase().includes(term));
+            filtered.forEach((c, idx) => {
                 let icon = "⚪"; if (c.coords && c.coords !== "0,0") icon = c.hasPhoto ? "📸" : "📍";
                 const div = document.createElement('div'); div.className = 'card';
                 div.innerHTML = `<div class="geo-btn" onclick="startVisit(${idx})">📍</div>
@@ -38,16 +47,15 @@
                 cont.appendChild(div);
             });
         }
-        function startOrder(idx) {
-            let filtered = clients.filter(c => c.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()));
+        window.startOrder = function(idx) {
             localStorage.setItem('selectedClient', JSON.stringify(filtered[idx]));
             window.location.href = 'Nomenklatura.html';
         }
-        function startVisit(idx) {
-            let filtered = clients.filter(c => c.name.toLowerCase().includes(document.getElementById('search').value.toLowerCase()));
+        window.startVisit = function(idx) {
+            document.getElementById('loading-overlay').style.display = 'flex';
             navigator.geolocation.getCurrentPosition((pos) => {
                 tg.sendData(JSON.stringify({type: 'visit_start', client: filtered[idx], coords: pos.coords.latitude + "," + pos.coords.longitude}));
-            }, (err) => { alert("Включите GPS"); }, {enableHighAccuracy:true});
+            }, (err) => { alert("Включите GPS"); document.getElementById('loading-overlay').style.display = 'none'; }, {enableHighAccuracy:true});
         }
         document.getElementById('search').oninput = render; load();
     </script>
