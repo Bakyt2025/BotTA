@@ -6,20 +6,23 @@
     <title>Экспедитор</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; padding: 10px; margin: 0; }
-        .card { background: #fff; border-radius: 10px; padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 5px solid #31b545; }
-        .name { font-weight: bold; color: #333; margin-bottom: 5px; font-size: 16px; }
-        .row { display: flex; justify-content: space-between; font-size: 14px; color: #666; margin: 2px 0; }
-        .btn { display: block; background: #31b545; color: #fff; text-align: center; padding: 10px; border-radius: 5px; text-decoration: none; margin-top: 10px; font-weight: bold; }
-        .header { text-align: center; margin-bottom: 20px; }
-        #error-log { color: red; font-size: 12px; text-align: center; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 10px; margin: 0; color: #333; }
+        .card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .name { font-weight: bold; font-size: 16px; color: #1c1c1c; margin-bottom: 8px; line-height: 1.2; }
+        .row { display: flex; justify-content: space-between; font-size: 14px; margin: 3px 0; color: #555; }
+        .btn-go { display: block; background: #31b545; color: #fff; text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; margin-top: 10px; font-weight: bold; }
+        .header { text-align: center; padding: 10px 0; border-bottom: 1px solid #ddd; margin-bottom: 15px; }
+        .status { font-size: 12px; color: #888; margin-top: 5px; }
+        #loader { text-align: center; padding: 20px; color: #666; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h3 id="date">Загрузка данных...</h3>
-        <div id="error-log"></div>
+        <b id="date">Загрузка...</b>
+        <div id="update-time" class="status"></div>
     </div>
+    
+    <div id="loader">Синхронизация с GitHub...</div>
     <div id="list"></div>
 
     <script>
@@ -27,15 +30,23 @@
         tg.expand();
 
         async function loadData() {
-            // Анти-кэш: добавляем метку времени
-            const url = `https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor.json?nocache=${Date.now()}`;
+            // ВАЖНО: Имя файла должно совпадать с GH_FILE_PATH в Python (expeditor.json)
+            const url = `https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor.json?v=${Date.now()}`;
             
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Файл не найден на GitHub');
+                if (!response.ok) throw new Error("Файл expeditor.json не найден. Нажмите 'Обновить данные' в боте.");
                 
                 const data = await response.json();
+                
+                // Проверка на пустые данные
+                if (!data.shops || data.shops.length === 0) {
+                    throw new Error("В файле нет данных о магазинах.");
+                }
+
+                document.getElementById('loader').style.display = 'none';
                 document.getElementById('date').innerText = data.date;
+                document.getElementById('update-time').innerText = "Обновлено: " + data.updated;
                 
                 const listDiv = document.getElementById('list');
                 listDiv.innerHTML = '';
@@ -46,14 +57,14 @@
                     card.innerHTML = `
                         <div class="name">${shop.name}</div>
                         <div class="row"><span>Накладная:</span> <b>${shop.invoice}</b></div>
-                        <div class="row"><span>Сумма:</span> <b>${shop.amount} сом</b></div>
-                        <a class="btn" href="https://www.google.com/maps/search/?api=1&query=${shop.coords}">📍 В ПУТЬ</a>
+                        <div class="row"><span>Сумма:</span> <b style="color: #2e7d32;">${shop.amount} сом</b></div>
+                        <a class="btn-go" href="https://www.google.com/maps/search/?api=1&query=${shop.coords}">📍 В ПУТЬ</a>
                     `;
                     listDiv.appendChild(card);
                 });
             } catch (err) {
-                document.getElementById('date').innerText = "Ошибка загрузки";
-                document.getElementById('error-log').innerText = err.message + ". Проверьте, что бот обновил данные.";
+                document.getElementById('loader').innerHTML = `<b style="color:red">${err.message}</b>`;
+                document.getElementById('date').innerText = "Ошибка";
             }
         }
 
