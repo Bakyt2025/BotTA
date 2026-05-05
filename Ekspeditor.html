@@ -3,50 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Экспедитор 2.0 - Контраст</title>
+    <title>Экспедитор Контраст</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-main: #FFFFFF;
             --bg-page: #F8F9FA;
             --text-bold: #000000;
-            --border-color: #000000; /* Максимальный контраст */
-            --accent-call: #0047AB; /* Глубокий синий для ссылок */
+            --border-color: #000000;
             --accent-price: #006400; /* Темно-зеленый */
-            --btn-nav: #107C10; /* Насыщенный зеленый */
-            --search-bg: #FFFFFF;
+            --btn-nav: #007AFF; /* Насыщенный синий */
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-page);
             color: var(--text-bold);
             margin: 0;
             padding: 0;
-            -webkit-font-smoothing: none; /* Отключаем сглаживание для четкости на солнце */
         }
 
-        /* Заголовок - Максимальная жирность */
+        /* Шапка: только дата, без лишних слов */
         header {
-            padding: 30px 20px 10px 20px;
+            padding: 20px;
             background: var(--bg-main);
             border-bottom: 3px solid var(--border-color);
+            text-align: center;
         }
 
-        header h1 {
-            font-size: 28px;
+        header h2 {
+            font-size: 20px;
             font-weight: 900;
             margin: 0;
             text-transform: uppercase;
         }
 
-        header p {
-            font-size: 16px;
-            font-weight: 700;
-            margin: 5px 0 0 0;
-        }
-
-        /* Поиск с жирной рамкой */
+        /* Поиск */
         .search-wrapper {
             padding: 15px 20px;
             position: sticky;
@@ -56,7 +48,7 @@
         }
 
         .search-bar {
-            background: var(--search-bg);
+            background: var(--bg-main);
             border: 2px solid var(--border-color);
             border-radius: 12px;
             display: flex;
@@ -70,11 +62,11 @@
             outline: none;
             width: 100%;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-bold);
         }
 
-        /* Список карточек */
+        /* Список */
         #shop-list {
             padding: 10px 15px 100px 15px;
         }
@@ -85,46 +77,17 @@
             border-radius: 16px;
             padding: 18px;
             margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
+            box-shadow: none;
         }
 
-        .shop-name {
-            font-size: 22px;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            font-size: 16px;
-            font-weight: 600; /* Жирный текст для адреса */
-        }
-
-        .info-row svg {
-            margin-right: 12px;
-            flex-shrink: 0;
-            stroke-width: 3px; /* Утолщенные линии иконок */
-        }
-
-        .phone-link {
-            color: var(--accent-call);
-            text-decoration: underline;
+        /* Название + Данные в скобках (Жирно и крупно) */
+        .full-name {
+            font-size: 19px;
             font-weight: 800;
-        }
-
-        .inn-box {
-            font-size: 14px;
-            font-weight: 700;
-            background: #EEE;
-            padding: 4px 8px;
-            display: inline-block;
-            margin-top: 5px;
-            border: 1px solid #000;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            display: block;
+            word-wrap: break-word;
         }
 
         .divider {
@@ -136,60 +99,57 @@
         .card-footer {
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: center;
         }
 
-        .amount-box {
+        .amount-info {
             display: flex;
             flex-direction: column;
         }
 
         .amount-label {
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
+            font-size: 13px;
+            font-weight: 900;
         }
 
         .amount-value {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             color: var(--accent-price);
         }
 
-        /* Кнопка "ПОЕХАЛИ" - Максимально заметная */
+        /* Кнопка */
         .btn-go {
             background-color: var(--btn-nav);
             color: #FFFFFF;
             border: 2px solid #000;
             border-radius: 12px;
-            padding: 15px 25px;
-            font-size: 18px;
+            padding: 15px 20px;
+            font-size: 16px;
             font-weight: 900;
             cursor: pointer;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: 8px;
-            text-transform: uppercase;
         }
 
         .btn-go:active {
             background-color: #000;
-            color: #FFF;
         }
 
-        #loader { text-align: center; padding: 50px; font-weight: 900; font-size: 20px; }
+        #loader { text-align: center; padding: 50px; font-weight: 900; font-size: 18px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1 id="sheet-date">МАРШРУТ</h1>
-    <p id="sheet-subtitle">Загрузка данных...</p>
+    <h2 id="sheet-date">Загрузка...</h2>
 </header>
 
 <div class="search-wrapper">
     <div class="search-bar">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="search" placeholder="ПОИСК МАГАЗИНА" oninput="filterShops()">
     </div>
 </div>
@@ -204,40 +164,20 @@
 
     let allShops = [];
 
-    // Парсер с упором на поиск телефона и ИНН
-    function parseShopDetails(fullName) {
-        let name = fullName;
-        let address = "АДРЕС НЕ УКАЗАН";
-        let phone = "";
-        let inn = "";
-
-        const match = fullName.match(/(.*?)\s*\((.*)\)/);
-        if (match) {
-            name = match[1].trim();
-            const details = match[2];
-            
-            const innMatch = details.match(/ИНН:\s*(\d+)/);
-            if (innMatch) inn = innMatch[1];
-
-            const phoneMatch = details.match(/Телефон:\s*([\d\s+]+)/);
-            if (phoneMatch) phone = phoneMatch[1].trim();
-
-            address = details.split(/Телефон:|ИНН:/)[0].replace(/,$/, '').trim();
-        }
-        return { name, address, phone, inn };
-    }
-
     async function loadData() {
+        // Анти-кэш загрузка
         const url = `https://raw.githubusercontent.com/Bakyt2025/BotTA/main/expeditor.json?v=${Date.now()}`;
         try {
             const r = await fetch(url);
             const data = await r.json();
             allShops = data.shops;
+            
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('sheet-subtitle').innerText = data.date;
+            document.getElementById('sheet-date').innerText = data.date;
+            
             render(allShops);
         } catch (e) {
-            document.getElementById('loader').innerText = "ОШИБКА ЗАГРУЗКИ";
+            document.getElementById('loader').innerText = "ОШИБКА ДАННЫХ";
         }
     }
 
@@ -246,35 +186,20 @@
         container.innerHTML = '';
 
         shops.forEach(shop => {
-            const info = parseShopDetails(shop.name);
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-                <div class="shop-name">${info.name}</div>
+                <div class="full-name">${shop.name}</div>
                 
-                <div class="info-row">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                    <span>${info.address}</span>
-                </div>
-
-                ${info.phone ? `
-                <div class="info-row">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.88 12.88 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    <a href="tel:${info.phone}" class="phone-link">${info.phone}</a>
-                </div>` : ''}
-
-                ${info.inn ? `<div class="inn-box">ИНН: ${info.inn}</div>` : ''}
-
                 <div class="divider"></div>
 
                 <div class="card-footer">
-                    <div class="amount-box">
-                        <span class="amount-label">СУММА (№${shop.invoice})</span>
+                    <div class="amount-info">
+                        <span class="amount-label">НАКЛАДНАЯ №${shop.invoice}</span>
                         <span class="amount-value">${shop.amount} СОМ</span>
                     </div>
                     <button class="btn-go" onclick="openMap('${shop.coords}')">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-                        ПУТЬ
+                        📍 В ПУТЬ
                     </button>
                 </div>
             `;
