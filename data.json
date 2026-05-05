@@ -5393,6 +5393,12 @@
             "address": "Рол",
             "coords": "41.631328,72.660939",
             "hasPhoto": true
+        },
+        {
+            "name": "Бакыт (Иманова 15)",
+            "address": "Иманова 15",
+            "coords": "41.631328,72.660939",
+            "hasPhoto": true
         }
     ],
     "products": [
