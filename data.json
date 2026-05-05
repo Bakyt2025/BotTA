@@ -5387,6 +5387,12 @@
             "address": "Поо",
             "coords": "41.631328,72.660939",
             "hasPhoto": true
+        },
+        {
+            "name": "Чарина",
+            "address": "Рол",
+            "coords": "41.631328,72.660939",
+            "hasPhoto": true
         }
     ],
     "products": [
