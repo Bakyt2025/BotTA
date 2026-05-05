@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Выбор магазина</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -25,10 +25,8 @@
         let tg = window.Telegram.WebApp; let clients = []; let filtered = [];
         async function load() {
             const r = await fetch('data.json?v=' + Date.now());
-            const d = await r.json(); 
-            clients = d.clients || [];
-            clients.sort((a, b) => a.name.localeCompare(b.name));
-            render();
+            const d = await r.json(); clients = d.clients || [];
+            clients.sort((a, b) => a.name.localeCompare(b.name)); render();
         }
         function render() {
             const term = document.getElementById('search').value.toLowerCase();
@@ -39,20 +37,19 @@
                 let btnClass = c.hasGPS ? "has-gps" : "no-gps";
                 const div = document.createElement('div'); div.className = 'card';
                 div.innerHTML = `<div class="status-btn ${btnClass}" onclick="startVisit(${idx})">${icon}</div>
-                    <div class="info-area" onclick="startOrder(${idx})">
-                        <div class="name">${c.name}</div>
-                    </div>`;
+                    <div class="info-area" onclick="startOrder(${idx})"><div class="name">${c.name}</div></div>`;
                 cont.appendChild(div);
             });
         }
-        window.startOrder = function(idx) {
+        function startOrder(idx) {
             localStorage.setItem('selectedClient', JSON.stringify(filtered[idx]));
             window.location.href = 'Nomenklatura.html';
         }
-        window.startVisit = function(idx) {
+        function startVisit(idx) {
             document.getElementById('loader').style.display = 'flex';
             navigator.geolocation.getCurrentPosition((pos) => {
                 tg.sendData(JSON.stringify({ type: 'visit_start', client: filtered[idx], coords: pos.coords.latitude + "," + pos.coords.longitude }));
+                tg.close();
             }, (err) => { alert("Включите GPS!"); document.getElementById('loader').style.display = 'none'; }, {enableHighAccuracy:true});
         }
         document.getElementById('search').oninput = render; load();
