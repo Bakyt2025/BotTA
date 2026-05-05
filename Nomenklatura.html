@@ -3,70 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Заказ</title>
+    <title>Набор товаров</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --accent: #34c759; }
-        body { font-family: -apple-system, sans-serif; margin: 0; padding-bottom: 100px; }
-        .header { background: #e5f1f6; padding: 12px 15px; font-weight: 600; display: flex; justify-content: space-between; position: sticky; top:0; z-index:10; border-bottom:1px solid #ddd; }
+        :root { --accent: #34c759; --danger: #ff3b30; }
+        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; padding-bottom: 100px; color: #1c1c1e; }
+        .header { background: #e5f1f6; padding: 12px 15px; font-weight: 600; position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
         .search-box { padding: 10px 15px; }
-        .search { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #f2f2f7; outline: none; box-sizing: border-box; }
+        .search { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #f2f2f7; outline: none; box-sizing: border-box; font-size: 16px; }
         .item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f2f2f7; }
+        .p-info { flex: 1; padding-right: 10px; }
+        .p-name { font-weight: 500; font-size: 15px; margin-bottom: 3px; }
+        .p-price { color: #007aff; font-weight: 700; font-size: 14px; }
+        .p-stock { font-size: 12px; color: #8e8e93; margin-left: 10px; }
+        .out-of-stock { color: var(--danger); font-weight: bold; }
         .controls { display: flex; align-items: center; gap: 15px; }
         .btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #e9e9eb; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-plus { background: var(--accent); color: white; }
-        .q { min-width: 24px; text-align: center; font-weight: bold; }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .q { min-width: 24px; text-align: center; font-weight: bold; font-size: 18px; }
         .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: white; border-top: 1px solid #eee; display: none; }
         .btn-send { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 14px; font-size: 18px; font-weight: 600; }
     </style>
 </head>
 <body>
     <div class="header"><span id="c-name">Загрузка...</span><a href="Kontragenty.html" style="color:#007aff; text-decoration:none; font-weight:400;">Назад</a></div>
-    <div class="search-box"><input type="text" id="search" placeholder="🔍 Поиск..." class="search"></div>
+    <div class="search-box"><input type="text" id="search" placeholder="🔍 Поиск товара..." class="search"></div>
     <div id="catalog"></div>
-    <div id="footer" class="footer"><button class="btn-send" onclick="send()">Оформить: <span id="total">0</span> сом</button></div>
+    <div id="footer" class="footer"><button class="btn-send" onclick="send()">Заказать: <span id="total">0</span> сом</button></div>
+
 <script>
-    let tg = window.Telegram.WebApp; let p_list = []; let cart = {};
+    let tg = window.Telegram.WebApp;
+    let products = []; let cart = {};
     const params = new URLSearchParams(window.location.search);
     let client = params.has('name') ? {name: params.get('name'), currentCoords: params.get('geo')||"0,0"} : JSON.parse(localStorage.getItem('selectedClient'));
+
     if (!client) location.href = 'Kontragenty.html';
     else document.getElementById('c-name').innerText = (client.currentCoords && client.currentCoords !== "0,0" ? "📍 " : "📞 ") + client.name;
+
     async function load() {
-        const r = await fetch('data.json?v=' + Date.now());
-        const d = await r.json(); p_list = d.products || []; render();
+        try {
+            const r = await fetch('data.json?v=' + Date.now());
+            const d = await r.json();
+            products = d.products || [];
+            render();
+        } catch (e) { document.getElementById('catalog').innerHTML = 'Ошибка загрузки'; }
     }
+
     function render() {
         const t = document.getElementById('search').value.toLowerCase();
-        const cont = document.getElementById('catalog'); cont.innerHTML = '';
-        p_list.forEach((p, idx) => {
+        const cont = document.getElementById('catalog');
+        cont.innerHTML = '';
+        products.forEach((p, idx) => {
             if (p.name.toLowerCase().includes(t)) {
-                const div = document.createElement('div'); div.className = 'item';
-                div.innerHTML = `<div><b>${p.name}</b><br>${p.price} сом</div>
+                const d = document.createElement('div');
+                d.className = 'item';
+                const isMax = cart[p.name] && cart[p.name].qty >= p.stock;
+                d.innerHTML = `<div class="p-info">
+                        <div class="p-name">${p.name}</div>
+                        <span class="p-price">${p.price} сом</span>
+                        <span class="p-stock ${p.stock <= 0 ? 'out-of-stock' : ''}">Остаток: ${p.stock}</span>
+                    </div>
                     <div class="controls">
                         <button class="btn" onclick="upd(${idx},-1)">-</button>
                         <span class="q" id="q-${idx}">${cart[p.name] ? cart[p.name].qty : 0}</span>
-                        <button class="btn btn-plus" onclick="upd(${idx},1)">+</button>
+                        <button class="btn btn-plus" id="btn-p-${idx}" ${isMax ? 'disabled' : ''} onclick="upd(${idx},1)">+</button>
                     </div>`;
-                cont.appendChild(div);
+                cont.appendChild(d);
             }
         });
     }
-    function upd(idx, delta) {
-        const p = p_list[idx];
+
+    window.upd = function(idx, delta) {
+        const p = products[idx];
         if (!cart[p.name]) cart[p.name] = { qty: 0, price: p.price };
+        
+        // Проверка остатка
+        if (delta > 0 && cart[p.name].qty >= p.stock) return;
+
         cart[p.name].qty += delta;
         if (cart[p.name].qty <= 0) delete cart[p.name];
-        let el = document.getElementById('q-' + idx); if (el) el.innerText = cart[p.name] ? cart[p.name].qty : 0;
-        let sum = 0; for (let n in cart) sum += cart[n].qty * cart[n].price;
+        
+        const el = document.getElementById('q-' + idx);
+        const btnP = document.getElementById('btn-p-' + idx);
+        if (el) el.innerText = cart[p.name] ? cart[p.name].qty : 0;
+        if (btnP) btnP.disabled = (cart[p.name] && cart[p.name].qty >= p.stock);
+        
+        let sum = 0;
+        for (let n in cart) { sum += cart[n].qty * cart[n].price; }
         document.getElementById('footer').style.display = sum > 0 ? 'block' : 'none';
         document.getElementById('total').innerText = Math.round(sum);
-    }
-    function send() {
-        if (Object.keys(cart).length === 0) return;
+    };
+
+    window.send = function() {
         tg.sendData(JSON.stringify({ client: client, items: cart, total: document.getElementById('total').innerText, coords: client.currentCoords || "0,0" }));
         tg.close();
     }
-    document.getElementById('search').oninput = render; load();
+
+    document.getElementById('search').oninput = render;
+    load();
 </script>
 </body>
 </html>
