@@ -5381,6 +5381,12 @@
             "address": "Исманова 57",
             "coords": "41.631328,72.660939",
             "hasPhoto": true
+        },
+        {
+            "name": "Мальчиш",
+            "address": "Поо",
+            "coords": "41.631328,72.660939",
+            "hasPhoto": true
         }
     ],
     "products": [
