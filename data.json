@@ -1,6 +1,12 @@
 {
     "clients": [
         {
+            "name": "/start (Алматинка)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "05kg (Ул. Фрунзе 184 )",
             "code": "000000709",
             "coords": "",
