@@ -11,6 +11,7 @@
             --main-color: #000000;
             --accent-color: #007AFF;
             --success-color: #28a745;
+            --disabled-color: #c4c4c4;
         }
 
         body {
@@ -20,6 +21,7 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Шапка */
@@ -33,7 +35,7 @@
             z-index: 1000;
         }
 
-        header h2 { margin: 0; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+        header h2 { margin: 0; font-size: 20px; font-weight: 900; text-transform: uppercase; }
         header p { margin: 5px 0 0; font-size: 12px; font-weight: 600; opacity: 0.6; }
 
         /* Поиск */
@@ -65,13 +67,14 @@
         .stats {
             display: flex;
             justify-content: space-between;
-            padding: 0 15px 10px;
-            font-size: 13px;
+            padding: 0 18px 10px;
+            font-size: 12px;
             font-weight: 800;
             text-transform: uppercase;
+            color: #444;
         }
 
-        /* Список */
+        /* Список карточек */
         #shop-list { padding: 0 15px 120px; }
 
         .card {
@@ -80,11 +83,8 @@
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 15px;
-            position: relative;
-            transition: transform 0.1s;
+            box-shadow: 0 2px 0 var(--main-color);
         }
-
-        .card:active { transform: scale(0.98); }
 
         .card-name {
             font-size: 18px;
@@ -92,6 +92,7 @@
             margin-bottom: 12px;
             display: block;
             line-height: 1.2;
+            color: var(--main-color);
         }
 
         .card-info {
@@ -103,24 +104,37 @@
         }
 
         .invoice-box { display: flex; flex-direction: column; }
-        .label { font-size: 11px; font-weight: 700; opacity: 0.5; margin-bottom: 2px; }
-        .invoice-num { font-size: 15px; font-weight: 800; }
+        .label { font-size: 10px; font-weight: 800; opacity: 0.5; margin-bottom: 2px; text-transform: uppercase; }
+        .invoice-num { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
         .amount { font-size: 22px; font-weight: 900; color: var(--success-color); }
 
+        /* Кнопка КАРТА */
         .btn-map {
             background: var(--accent-color);
             color: #fff;
             border: 2px solid var(--main-color);
             border-radius: 10px;
-            padding: 10px 15px;
+            padding: 10px 14px;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 5px;
+            transition: all 0.1s;
         }
 
-        /* Состояния */
+        .btn-map:active { transform: scale(0.95); background: #000; color: #fff; }
+
+        /* Состояние для неактивной кнопки */
+        .btn-map:disabled {
+            background-color: var(--disabled-color) !important;
+            border-color: #888 !important;
+            color: #666 !important;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Загрузка и ошибки */
         #loader { text-align: center; padding: 50px; font-weight: 900; }
         .error-box { color: red; text-align: center; padding: 20px; font-weight: 800; }
     </style>
@@ -128,23 +142,23 @@
 <body>
 
 <header>
-    <h2 id="sheet-date">ЗАГРУЗКА...</h2>
+    <h2 id="sheet-date">ЗАГРУЗКА ДАННЫХ...</h2>
     <p id="last-updated"></p>
 </header>
 
 <div class="search-container">
     <div class="search-bar">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" id="search" placeholder="ПОИСК..." oninput="filterShops()">
+        <input type="text" id="search" placeholder="ПОИСК МАГАЗИНА..." oninput="filterShops()">
     </div>
 </div>
 
 <div class="stats">
-    <span id="count-shops">Точек: 0</span>
-    <span id="total-sum">Сумма: 0</span>
+    <span id="count-shops">ТОЧЕК: 0</span>
+    <span id="total-sum">ИТОГО: 0 СОМ</span>
 </div>
 
-<div id="loader">ПОДОЖДИТЕ, СВЯЗЬ С ОБЛАКОМ...</div>
+<div id="loader">ПОЖАЛУЙСТА, ПОДОЖДИТЕ...</div>
 <div id="shop-list"></div>
 
 <script>
@@ -153,40 +167,31 @@
     
     let allShops = [];
 
-    // Форматирование чисел (10500 -> 10 500)
+    // Красивое разделение тысяч (15000 -> 15 000)
     const formatNum = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
     async function loadData() {
-        // Используем GitHub Pages URL (он стабильнее) + Cache Buster
-        const url = `https://bakyt2025.github.io/BotTA/expeditor.json?nocache=${Date.now()}`;
+        // Ссылка с защитой от кэширования
+        const url = `https://bakyt2025.github.io/BotTA/expeditor.json?v=${Date.now()}`;
         
         try {
             const response = await fetch(url);
-            
-            if (!response.ok) {
-                if (response.status === 404) throw new Error("Файл данных еще не создан ботом");
-                throw new Error(`Ошибка сервера: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Ошибка: ${response.status}`);
 
             const data = await response.json();
+            allShops = data.shops || [];
             
-            if (!data.shops || !Array.isArray(data.shops)) {
-                throw new Error("Неверный формат данных (список пуст)");
-            }
-
-            allShops = data.shops;
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('sheet-date').innerText = data.date || "МАРШРУТ";
-            document.getElementById('last-updated').innerText = `Обновлено в ${data.updated || '--:--'}`;
+            document.getElementById('sheet-date').innerText = data.date || "МАРШРУТНЫЙ ЛИСТ";
+            document.getElementById('last-updated').innerText = `ОБНОВЛЕНО В ${data.updated || '--:--'}`;
             
             render(allShops);
         } catch (e) {
-            console.error(e);
             document.getElementById('loader').innerHTML = `
                 <div class="error-box">
-                    ⚠️ ОШИБКА ЗАГРУЗКИ<br>
-                    <small style="font-size: 12px; font-weight: normal; opacity: 0.7;">${e.message}</small><br><br>
-                    <button onclick="location.reload()" style="padding: 10px; border-radius: 8px; border: 1px solid black; font-weight: bold;">ПОПРОБОВАТЬ СНОВА</button>
+                    ⚠️ ОШИБКА ДОСТУПА<br>
+                    <small style="font-weight:normal">ОБНОВИТЕ ДАННЫЕ В БОТЕ И ПОДОЖДИТЕ 1 МИНУТУ</small><br><br>
+                    <button onclick="location.reload()" style="padding:10px 20px; border-radius:8px; border:2px solid black; font-weight:bold">ПОВТОРИТЬ</button>
                 </div>`;
         }
     }
@@ -198,8 +203,12 @@
         let total = 0;
 
         shops.forEach(shop => {
-            const sum = parseFloat(String(shop.amount).replace(/[^0-9.]/g, '')) || 0;
-            total += sum;
+            // Очищаем сумму от лишних знаков и считаем итог
+            const sumValue = parseFloat(String(shop.amount).replace(/[^0-9.]/g, '')) || 0;
+            total += sumValue;
+
+            // ПРОВЕРКА КООРДИНАТ
+            const hasCoords = shop.coords && shop.coords !== "0,0" && shop.coords.trim() !== "" && shop.coords.includes(',');
 
             const card = document.createElement('div');
             card.className = 'card';
@@ -207,20 +216,22 @@
                 <div class="card-name">${shop.name}</div>
                 <div class="card-info">
                     <div class="invoice-box">
-                        <span class="label">НАКЛАДНАЯ</span>
+                        <span class="label">ДОКУМЕНТ</span>
                         <span class="invoice-num">№${shop.invoice}</span>
                         <span class="amount">${formatNum(shop.amount)} <small style="font-size:12px">СОМ</small></span>
                     </div>
-                    <button class="btn-map" onclick="openMap('${shop.coords}', '${shop.name}')">
-                        📍 КАРТА
+                    <button class="btn-map" 
+                        onclick="openMap('${shop.coords}')" 
+                        ${hasCoords ? '' : 'disabled'}>
+                        ${hasCoords ? '📍 КАРТА' : 'НЕТ КООРД.'}
                     </button>
                 </div>
             `;
             container.appendChild(card);
         });
 
-        document.getElementById('count-shops').innerText = `Точек: ${shops.length}`;
-        document.getElementById('total-sum').innerText = `Сумма: ${formatNum(total)}`;
+        document.getElementById('count-shops').innerText = `ТОЧЕК: ${shops.length}`;
+        document.getElementById('total-sum').innerText = `ИТОГО: ${formatNum(total)} СОМ`;
     }
 
     function filterShops() {
@@ -232,13 +243,12 @@
         render(filtered);
     }
 
-    function openMap(coords, name) {
-        tg.HapticFeedback.impactOccurred('medium');
-        if (!coords || coords === "0,0" || coords.trim() === "") {
-            return tg.showAlert("❌ Координаты не указаны для этого магазина");
-        }
+    function openMap(coords) {
+        tg.HapticFeedback.impactOccurred('medium'); // Вибрация при нажатии
         
-        // Ссылка работает и для Google, и для Яндекс.Навигатора
+        if (!coords || coords === "0,0") return;
+
+        // Ссылка открывает навигатор (Google или Яндекс)
         const url = `https://www.google.com/maps/search/?api=1&query=${coords.trim()}`;
         tg.openLink(url);
     }
