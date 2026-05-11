@@ -24,7 +24,7 @@
     <script>
         let tg = window.Telegram.WebApp; let clients = []; let filtered = [];
         async function load() {
-            const r = await fetch('dataBk.json?v=' + Date.now());
+            const r = await fetch('databk.json?v=' + Date.now());
             const d = await r.json(); clients = d.clients || [];
             clients.sort((a, b) => a.name.localeCompare(b.name)); render();
         }
