@@ -643,6 +643,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзу (Исманова 15)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арзуу (Бк )",
             "code": "ряд001094",
             "coords": "",
