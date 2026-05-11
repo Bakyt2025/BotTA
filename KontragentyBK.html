@@ -3,56 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Выбор магазина</title>
+    <title>Выбор магазина БК</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f2f2f7; margin: 0; padding: 15px; }
-        .search { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        body { font-family: -apple-system, sans-serif; background: #f2f2f7; margin: 0; padding: 15px; user-select: none; }
+        .search { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; outline: none; -webkit-appearance: none; }
         .card { background: white; border-radius: 14px; margin-bottom: 10px; display: flex; align-items: center; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); min-height: 70px; }
         .status-btn { width: 60px; align-self: stretch; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border-right: 1px solid #eee; }
         .no-gps { background: #fff1f0; }
         .has-gps { background: #f6ffed; }
-        .info-area { flex: 1; padding: 12px; cursor: pointer; }
+        .info-area { flex: 1; padding: 12px; cursor: pointer; active-background: #f9f9f9; }
         .name { font-weight: 600; font-size: 15px; color: #1c1c1e; line-height: 1.3; }
-        #loader { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; font-weight: bold; }
+        #loader { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; font-weight: bold; flex-direction: column; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div id="loader">⏳ Получение координат...</div>
+    <div id="loader"><div class="spinner"></div><span>Определение координат...</span></div>
     <input type="text" id="search" class="search" placeholder="🔍 Поиск магазина...">
     <div id="list"></div>
+
     <script>
-        let tg = window.Telegram.WebApp; let clients = []; let filtered = [];
+        let tg = window.Telegram.WebApp; 
+        let clients = []; 
+        let filtered = [];
+
         async function load() {
-            const r = await fetch('databk.json?v=' + Date.now());
-            const d = await r.json(); clients = d.clients || [];
-            clients.sort((a, b) => a.name.localeCompare(b.name)); render();
+            try {
+                // Загружаем именно databk.json
+                const r = await fetch('databk.json?v=' + Date.now());
+                const d = await r.json(); 
+                clients = d.clients || [];
+                clients.sort((a, b) => a.name.localeCompare(b.name)); 
+                render();
+            } catch (e) {
+                document.getElementById('list').innerHTML = '<center style="padding:20px;">Ошибка загрузки databk.json</center>';
+            }
         }
+
         function render() {
             const term = document.getElementById('search').value.toLowerCase();
-            const cont = document.getElementById('list'); cont.innerHTML = '';
+            const cont = document.getElementById('list'); 
+            cont.innerHTML = '';
+            
             filtered = clients.filter(c => c.name.toLowerCase().includes(term));
+            
             filtered.forEach((c, idx) => {
                 let icon = c.hasGPS ? "🟢" : "🔴";
                 let btnClass = c.hasGPS ? "has-gps" : "no-gps";
-                const div = document.createElement('div'); div.className = 'card';
-                div.innerHTML = `<div class="status-btn ${btnClass}" onclick="startVisit(${idx})">${icon}</div>
-                    <div class="info-area" onclick="startOrder(${idx})"><div class="name">${c.name}</div></div>`;
+                const div = document.createElement('div'); 
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="status-btn ${btnClass}" onclick="startVisit(${idx})">${icon}</div>
+                    <div class="info-area" onclick="startOrder(${idx})">
+                        <div class="name">${c.name}</div>
+                    </div>`;
                 cont.appendChild(div);
             });
         }
+
         function startOrder(idx) {
+            // Сохраняем выбранного клиента в память браузера
             localStorage.setItem('selectedClient', JSON.stringify(filtered[idx]));
-            window.location.href = 'Nomenklatura.html';
+            // ИСПРАВЛЕНО: Переход на NomenklaturaBK.html
+            window.location.href = 'NomenklaturaBK.html';
         }
+
         function startVisit(idx) {
             document.getElementById('loader').style.display = 'flex';
+            
             navigator.geolocation.getCurrentPosition((pos) => {
-                tg.sendData(JSON.stringify({ type: 'visit_start', client: filtered[idx], coords: pos.coords.latitude + "," + pos.coords.longitude }));
+                const coords = pos.coords.latitude + "," + pos.coords.longitude;
+                tg.sendData(JSON.stringify({ 
+                    type: 'visit_start', 
+                    client: filtered[idx], 
+                    coords: coords 
+                }));
                 tg.close();
-            }, (err) => { alert("Включите GPS!"); document.getElementById('loader').style.display = 'none'; }, {enableHighAccuracy:true});
+            }, (err) => { 
+                alert("Ошибка GPS! Пожалуйста, включите геолокацию на телефоне."); 
+                document.getElementById('loader').style.display = 'none'; 
+            }, { enableHighAccuracy: true, timeout: 5000 });
         }
-        document.getElementById('search').oninput = render; load();
+
+        document.getElementById('search').oninput = render; 
+        load();
+        
+        // Расширяем WebApp на весь экран
+        tg.expand();
     </script>
 </body>
 </html>
