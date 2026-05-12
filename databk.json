@@ -1,6 +1,12 @@
 {
     "clients": [
         {
+            "name": "/start (/start)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "1000  туркун трасс ош бишкек",
             "code": "ряд001141",
             "coords": "",
