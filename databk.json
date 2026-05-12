@@ -1003,6 +1003,12 @@
             "hasGPS": false
         },
         {
+            "name": "Бекназар-маркет (Исманова 15)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Беко (Ар )",
             "code": "ряд001097",
             "coords": "",
