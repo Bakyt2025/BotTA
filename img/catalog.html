@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Луи‑Витон — Каталог сумок</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #faf7f2; color: #3e2c1c; }
+        header { background: linear-gradient(135deg, #6b4c3b, #8b6b5a); color: white; text-align: center; padding: 2rem 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        header h1 { font-size: 2.2rem; letter-spacing: 2px; font-weight: 300; }
+        header p { margin-top: 0.5rem; font-style: italic; opacity: 0.9; }
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; }
+        .card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+        .card img { width: 100%; height: 250px; object-fit: cover; border-bottom: 1px solid #eee; }
+        .card-body { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
+        .card-body h2 { font-size: 1.2rem; font-weight: 500; margin-bottom: 0.5rem; color: #4a3728; }
+        .card-body .price { font-size: 1.6rem; font-weight: 700; color: #b07d4b; margin-bottom: 0.8rem; }
+        .card-body .desc { font-size: 0.95rem; color: #6b5b4e; line-height: 1.5; flex: 1; }
+        .card-body button { margin-top: 1rem; padding: 0.7rem; border: none; background: #6b4c3b; color: white; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .card-body button:hover { background: #8b6b5a; }
+        footer { text-align: center; margin: 2rem 0; color: #9e8a7c; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>👜 Louis Vuitton</h1>
+        <p>Коллекция изысканных сумок</p>
+    </header>
+    <div class="container">
+        <div class="grid" id="catalog"></div>
+    </div>
+    <footer>© 2026 Интернет-магазин «Луи‑Витон»</footer>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const catalog = [];
+
+        function renderCatalog() {
+            const grid = document.getElementById('catalog');
+            grid.innerHTML = catalog.map(item => {
+                const imgSrc = item.image || 'https://via.placeholder.com/300x250?text=No+Image';
+                return `
+                <div class="card">
+                    <img src="${imgSrc}" alt="${item.name}">
+                    <div class="card-body">
+                        <h2>${item.name}</h2>
+                        <div class="price">${item.price.toFixed(0)} сом</div>
+                        <div class="desc">${item.description || 'Изысканный дизайн и высочайшее качество.'}</div>
+                        <button onclick="order('${item.name}', ${item.price})">✨ Оформить заказ</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function order(name, price) {
+            tg.sendData(JSON.stringify({
+                type: 'order',
+                name: name,
+                price: price
+            }));
+        }
+
+        renderCatalog();
+    </script>
+</body>
+</html>
