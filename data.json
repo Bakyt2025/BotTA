@@ -2581,6 +2581,12 @@
             "hasGPS": false
         },
         {
+            "name": "Канат (Дордой)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Канат база (Ленинское )",
             "code": "000000293",
             "coords": "",
