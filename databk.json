@@ -3285,12 +3285,12 @@
         {
             "name": "КHABIB Мохито 0,45л",
             "price": 70.0,
-            "stock": 519
+            "stock": 507
         },
         {
             "name": "КHABIB Энергетик 0.45л",
             "price": 75.0,
-            "stock": 388
+            "stock": 376
         },
         {
             "name": "КHABIB Энергетик канталупа 0.45л",
@@ -3550,7 +3550,7 @@
         {
             "name": "Сокосодержащий напиток \" Cantaloupe juice\" 0,5",
             "price": 60.0,
-            "stock": 480
+            "stock": 468
         },
         {
             "name": "Сокосодержащий напиток \"Blackcurrant juice\" 0,5",
