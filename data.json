@@ -2515,6 +2515,12 @@
             "hasGPS": true
         },
         {
+            "name": "Жома база (Ленинское)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Жоомарт база ( )",
             "code": "000000556",
             "coords": "",
