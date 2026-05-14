@@ -5083,6 +5083,12 @@
             "hasGPS": false
         },
         {
+            "name": "Проловоск (Криносов 45)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Р (Т)",
             "code": "NEW",
             "coords": "0,0",
