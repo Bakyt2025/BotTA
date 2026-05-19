@@ -1513,6 +1513,12 @@
             "hasGPS": false
         },
         {
+            "name": "Б (О)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Баель Сыдыкова (290 )",
             "code": "000000381",
             "coords": "",
