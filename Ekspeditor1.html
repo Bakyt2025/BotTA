@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Экспедитор PRO</title>
+    <title>Экспедитор PRO №2</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -153,12 +153,12 @@
 <body>
 
 <header>
-    <h2 id="sheet-date">ЗАГРУЗКА...</h2>
+    <h2 id="sheet-date">ЗАГРУЗКА КОПИИ...</h2>
 </header>
 
 <div class="search-container">
     <div class="search-bar">
-        <input type="text" id="search" placeholder="ПОИСК МАГАЗИНА..." oninput="filterShops()">
+        <input type="text" id="search" placeholder="ПОИСК В СПИСКЕ №2..." oninput="filterShops()">
     </div>
 </div>
 
@@ -180,27 +180,29 @@
     tg.expand();
     
     let allShops = [];
-    let visitedInvoices = JSON.parse(localStorage.getItem('visited_shops') || '[]');
+    // ИСПОЛЬЗУЕМ НОВЫЙ КЛЮЧ visited_shops_2 ДЛЯ РАЗДЕЛЕНИЯ ДАННЫХ
+    let visitedInvoices = JSON.parse(localStorage.getItem('visited_shops_2') || '[]');
 
     const formatNum = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
     async function loadData() {
-        const url = `https://bakyt2025.github.io/BotTA/expeditor.json?v=${Date.now()}`;
+        // ЗАГРУЖАЕМ ИЗ expeditor1.json
+        const url = `https://bakyt2025.github.io/BotTA/expeditor1.json?v=${Date.now()}`;
         try {
             const response = await fetch(url);
+            if (!response.ok) throw new Error('File not found');
             const data = await response.json();
             allShops = data.shops || [];
             document.getElementById('loader').style.display = 'none';
-            document.getElementById('sheet-date').innerText = data.date || "МАРШРУТ";
+            document.getElementById('sheet-date').innerText = data.date || "МАРШРУТ №2";
             render(allShops);
         } catch (e) {
-            document.getElementById('loader').innerHTML = "ОШИБКА ЗАГРУЗКИ";
+            document.getElementById('loader').innerHTML = "ОШИБКА: ФАЙЛ expeditor1.json НЕ НАЙДЕН.<br><br>Нажмите 'Обновить данные' в боте.";
         }
     }
 
-    // Расчет расстояния по формуле Хаверсина
     function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; // Радиус Земли в км
+        const R = 6371; 
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -218,14 +220,14 @@
         } else {
             visitedInvoices.push(invoice);
         }
-        localStorage.setItem('visited_shops', JSON.stringify(visitedInvoices));
+        localStorage.setItem('visited_shops_2', JSON.stringify(visitedInvoices));
         render(allShops);
     }
 
     function resetVisited() {
-        if (confirm("Очистить все отметки о посещении?")) {
+        if (confirm("Очистить все отметки в этом боте?")) {
             visitedInvoices = [];
-            localStorage.removeItem('visited_shops');
+            localStorage.removeItem('visited_shops_2');
             render(allShops);
         }
     }
@@ -234,7 +236,6 @@
         const container = document.getElementById('shop-list');
         container.innerHTML = '';
         
-        // Если передан GPS, считаем расстояние и сортируем
         let shopsToRender = [...shops];
         if (userCoords) {
             shopsToRender = shopsToRender
@@ -276,13 +277,13 @@
             container.appendChild(card);
         });
 
-        document.getElementById('stat-info').innerText = `ТОЧЕК: ${shops.length} | ПОСЕЩЕНО: ${visitedInvoices.length}`;
+        document.getElementById('stat-info').innerText = `ТОЧЕК: ${shops.length} | ВИЗИТОВ: ${visitedInvoices.length}`;
     }
 
     function showNearest() {
         tg.HapticFeedback.impactOccurred('medium');
         document.getElementById('loader').style.display = 'block';
-        document.getElementById('loader').innerText = "ОПРЕДЕЛЯЕМ МЕСТОПОЛОЖЕНИЕ...";
+        document.getElementById('loader').innerText = "ПОИСК GPS...";
 
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -291,7 +292,7 @@
             },
             (err) => {
                 document.getElementById('loader').style.display = 'none';
-                tg.showAlert("Ошибка GPS: разрешите доступ к геопозиции");
+                tg.showAlert("Ошибка GPS: включите геопозицию");
             },
             { enableHighAccuracy: true }
         );
