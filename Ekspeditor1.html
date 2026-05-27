@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Экспедитор PRO</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --tg-theme-bg-color: #f0f2f5;
+            --main-color: #000000;
+            --accent-color: #007AFF;
+            --success-color: #28a745;
+            --disabled-color: #c4c4c4;
+            --visited-bg: #e8f5e9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color);
+            color: #000;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 2px solid var(--main-color);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h2 { margin: 0; font-size: 18px; font-weight: 900; text-transform: uppercase; }
+
+        .search-container { padding: 15px 15px 5px 15px; background: var(--tg-theme-bg-color); }
+        
+        .search-bar {
+            background: #fff;
+            border: 2px solid var(--main-color);
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 10px 15px;
+        }
+
+        .btn-action {
+            background: #fff;
+            border: 2px solid var(--main-color);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn-nearest { background: var(--main-color); color: #fff; }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 18px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #666;
+        }
+
+        .reset-link { color: var(--accent-color); text-decoration: underline; cursor: pointer; }
+
+        #shop-list { padding: 10px 15px 120px; }
+
+        .card {
+            background: #fff;
+            border: 2px solid var(--main-color);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .card.visited {
+            background-color: var(--visited-bg);
+            border-color: var(--success-color);
+            opacity: 0.8;
+        }
+
+        .card-name { font-size: 17px; font-weight: 900; margin-bottom: 10px; display: block; line-height: 1.2; }
+
+        .distance-tag {
+            font-size: 11px;
+            background: var(--accent-color);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+        }
+
+        .card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-top: 1px dashed #ccc;
+            padding-top: 10px;
+        }
+
+        .invoice-box { display: flex; flex-direction: column; }
+        .amount { font-size: 20px; font-weight: 900; color: var(--success-color); }
+
+        .card-controls { display: flex; gap: 8px; }
+
+        .btn-icon {
+            border: 2px solid var(--main-color);
+            border-radius: 10px;
+            padding: 10px;
+            font-weight: 900;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-map { background: var(--accent-color); color: white; min-width: 80px; }
+        .btn-check { background: #fff; width: 45px; }
+        .card.visited .btn-check { background: var(--success-color); color: white; border-color: var(--success-color); }
+
+        #loader { text-align: center; padding: 50px; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 id="sheet-date">ЗАГРУЗКА...</h2>
+</header>
+
+<div class="search-container">
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="ПОИСК МАГАЗИНА..." oninput="filterShops()">
+    </div>
+</div>
+
+<div class="nav-buttons">
+    <div class="btn-action btn-nearest" onclick="showNearest()">📍 БЛИЖАЙШИЕ 4</div>
+    <div class="btn-action" onclick="render(allShops)">ПОКАЗАТЬ ВСЕ</div>
+</div>
+
+<div class="stats">
+    <span id="stat-info">ТОЧЕК: 0</span>
+    <span class="reset-link" onclick="resetVisited()">СБРОСИТЬ ВИЗИТЫ</span>
+</div>
+
+<div id="loader">ПОДОЖДИТЕ...</div>
+<div id="shop-list"></div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    
+    let allShops = [];
+    let visitedInvoices = JSON.parse(localStorage.getItem('visited_shops') || '[]');
+
+    const formatNum = (num) => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+    async function loadData() {
+        const url = `https://bakyt2025.github.io/BotTA/expeditor.json?v=${Date.now()}`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            allShops = data.shops || [];
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('sheet-date').innerText = data.date || "МАРШРУТ";
+            render(allShops);
+        } catch (e) {
+            document.getElementById('loader').innerHTML = "ОШИБКА ЗАГРУЗКИ";
+        }
+    }
+
+    // Расчет расстояния по формуле Хаверсина
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Радиус Земли в км
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    function toggleVisited(invoice) {
+        tg.HapticFeedback.impactOccurred('light');
+        const index = visitedInvoices.indexOf(invoice);
+        if (index > -1) {
+            visitedInvoices.splice(index, 1);
+        } else {
+            visitedInvoices.push(invoice);
+        }
+        localStorage.setItem('visited_shops', JSON.stringify(visitedInvoices));
+        render(allShops);
+    }
+
+    function resetVisited() {
+        if (confirm("Очистить все отметки о посещении?")) {
+            visitedInvoices = [];
+            localStorage.removeItem('visited_shops');
+            render(allShops);
+        }
+    }
+
+    function render(shops, userCoords = null) {
+        const container = document.getElementById('shop-list');
+        container.innerHTML = '';
+        
+        // Если передан GPS, считаем расстояние и сортируем
+        let shopsToRender = [...shops];
+        if (userCoords) {
+            shopsToRender = shopsToRender
+                .filter(s => s.coords && s.coords !== "0,0" && !visitedInvoices.includes(s.invoice))
+                .map(s => {
+                    const [lat, lon] = s.coords.split(',').map(Number);
+                    return { ...s, dist: getDistance(userCoords.lat, userCoords.lon, lat, lon) };
+                })
+                .sort((a, b) => a.dist - b.dist)
+                .slice(0, 4);
+        }
+
+        shopsToRender.forEach(shop => {
+            const isVisited = visitedInvoices.includes(shop.invoice);
+            const hasCoords = shop.coords && shop.coords !== "0,0";
+
+            const card = document.createElement('div');
+            card.className = `card ${isVisited ? 'visited' : ''}`;
+            card.innerHTML = `
+                <div class="card-name">
+                    ${shop.name}
+                    ${shop.dist ? `<span class="distance-tag">${shop.dist.toFixed(1)} км</span>` : ''}
+                </div>
+                <div class="card-info">
+                    <div class="invoice-box">
+                        <span style="font-size:10px; font-weight:800; opacity:0.6">№${shop.invoice}</span>
+                        <span class="amount">${formatNum(shop.amount)} <small style="font-size:10px">СОМ</small></span>
+                    </div>
+                    <div class="card-controls">
+                        <button class="btn-icon btn-check" onclick="toggleVisited('${shop.invoice}')">
+                            ${isVisited ? '✅' : '✔️'}
+                        </button>
+                        <button class="btn-icon btn-map" onclick="openMap('${shop.coords}')" ${hasCoords ? '' : 'disabled'}>
+                            ${hasCoords ? '📍 КАРТА' : 'НЕТ КООРД.'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+
+        document.getElementById('stat-info').innerText = `ТОЧЕК: ${shops.length} | ПОСЕЩЕНО: ${visitedInvoices.length}`;
+    }
+
+    function showNearest() {
+        tg.HapticFeedback.impactOccurred('medium');
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('loader').innerText = "ОПРЕДЕЛЯЕМ МЕСТОПОЛОЖЕНИЕ...";
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                document.getElementById('loader').style.display = 'none';
+                render(allShops, { lat: pos.coords.latitude, lon: pos.coords.longitude });
+            },
+            (err) => {
+                document.getElementById('loader').style.display = 'none';
+                tg.showAlert("Ошибка GPS: разрешите доступ к геопозиции");
+            },
+            { enableHighAccuracy: true }
+        );
+    }
+
+    function filterShops() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = allShops.filter(s => s.name.toLowerCase().includes(q) || s.invoice.toLowerCase().includes(q));
+        render(filtered);
+    }
+
+    function openMap(coords) {
+        tg.HapticFeedback.impactOccurred('medium');
+        if (!coords || coords === "0,0") return;
+        tg.openLink(`https://www.google.com/maps/search/?api=1&query=${coords.trim()}`);
+    }
+
+    loadData();
+</script>
+
+</body>
+</html>
