@@ -1645,6 +1645,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзан (Кемин центр)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арзан (ул Баялинова 35 )",
             "code": "000000095",
             "coords": "",
