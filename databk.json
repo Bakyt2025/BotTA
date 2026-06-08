@@ -1399,6 +1399,12 @@
             "hasGPS": false
         },
         {
+            "name": "Данияр (Адилет базар)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Дасторкон (БК )",
             "code": "ряд000889",
             "coords": "",
