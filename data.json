@@ -187,6 +187,12 @@
             "hasGPS": false
         },
         {
+            "name": "Manav Istanbul (Верхний джал 3:4)",
+            "code": "NEW",
+            "coords": "42.835383,74.568434",
+            "hasGPS": true
+        },
+        {
             "name": "NAVAT (напротив Милана Т Молдо 208 )",
             "code": "000000092",
             "coords": "",
