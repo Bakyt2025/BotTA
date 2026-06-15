@@ -8323,6 +8323,12 @@
             "hasGPS": false
         },
         {
+            "name": "Рахмат (Анкара 40)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Рахмат (Анкара 40) ( )",
             "code": "000001287",
             "coords": "",
