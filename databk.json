@@ -3917,7 +3917,12 @@
         {
             "name": "Сокосодержащий напиток \"Blackcurrant juice\" черная",
             "price": 50.0,
-            "stock": -14
+            "stock": -15
+        },
+        {
+            "name": "Сокосодержащий напиток \"Melon juice\" дыня 0,5 л",
+            "price": 50.0,
+            "stock": -15
         },
         {
             "name": "Сокосодержащий напиток\"Cantaloupe Juice\" 1лт",
