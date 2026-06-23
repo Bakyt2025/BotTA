@@ -11341,6 +11341,12 @@
             "hasGPS": true
         },
         {
+            "name": "Ысык ата (Токмок)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ысык ата (Ысык ата токмок)",
             "code": "NEW",
             "coords": "0,0",
