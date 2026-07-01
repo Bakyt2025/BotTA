@@ -1135,6 +1135,12 @@
             "hasGPS": false
         },
         {
+            "name": "Банан (Базар базар коргон)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Барпы (Береке )",
             "code": "ряд000959",
             "coords": "",
