@@ -301,6 +301,12 @@
             "hasGPS": false
         },
         {
+            "name": "Ice (Учкун 21/1)",
+            "code": "NEW",
+            "coords": "42.870469,74.694599",
+            "hasGPS": true
+        },
+        {
             "name": "Irina (Ул кольбаева 14 )",
             "code": "000000159",
             "coords": "",
