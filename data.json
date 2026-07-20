@@ -7243,6 +7243,12 @@
             "hasGPS": false
         },
         {
+            "name": "Кут (Кырман 37а)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Кут (Николай Гоголя 122) ( )",
             "code": "000001506",
             "coords": "",
