@@ -37,6 +37,12 @@
             "hasGPS": false
         },
         {
+            "name": "Бай азык (Бургонду, 0755400014)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Байэл 24/7 (Бургонду сай)",
             "code": "NEW",
             "coords": "0,0",
