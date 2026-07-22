@@ -1,5 +1,12 @@
 {
-    "clients": [],
+    "clients": [
+        {
+            "name": "Амина (Мира 56)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        }
+    ],
     "products": [
         {
             "name": "Аджика 0,43л. ст/б",
