@@ -29,6 +29,12 @@
             "code": "NEW",
             "coords": "0,0",
             "hasGPS": false
+        },
+        {
+            "name": "Нурмухаммед (Масы)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
         }
     ],
     "products": [
