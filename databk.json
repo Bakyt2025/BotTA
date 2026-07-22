@@ -55,6 +55,12 @@
             "hasGPS": false
         },
         {
+            "name": "Калил Ата (Кочкор Ата трасса)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Кызыл ункур (Базар коргон рынок)",
             "code": "NEW",
             "coords": "0,0",
