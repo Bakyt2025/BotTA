@@ -49,6 +49,12 @@
             "hasGPS": false
         },
         {
+            "name": "Байэл 2 (Адилет базар)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Байэл 24/7 (Бургонду сай)",
             "code": "NEW",
             "coords": "0,0",
