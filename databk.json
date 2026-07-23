@@ -43,6 +43,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арча (улица Чехова, 2/9)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Бай азык (Бургонду, 0755400014)",
             "code": "NEW",
             "coords": "0,0",
