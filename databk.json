@@ -139,6 +139,12 @@
             "hasGPS": false
         },
         {
+            "name": "Нари (Адилет базар)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ноокен Маркет (Масы, +996 700 173 917)",
             "code": "NEW",
             "coords": "0,0",
