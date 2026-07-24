@@ -9247,6 +9247,12 @@
             "hasGPS": false
         },
         {
+            "name": "Микро (4-мкр 36/1)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Милана (Ак-Туз 16а/1) ( )",
             "code": "000002389",
             "coords": "",
