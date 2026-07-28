@@ -37,6 +37,12 @@
             "hasGPS": false
         },
         {
+            "name": "Акылай (Граница бургонду)",
+            "code": "NEW",
+            "coords": "41.048267,72.340553",
+            "hasGPS": true
+        },
+        {
             "name": "Алма (КА)",
             "code": "NEW",
             "coords": "0,0",
