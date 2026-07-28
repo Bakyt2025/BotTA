@@ -43,6 +43,12 @@
             "hasGPS": true
         },
         {
+            "name": "Алма (Кочкор Ата)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Алтын балык (Береке) ( )",
             "code": "000000057",
             "coords": "",
