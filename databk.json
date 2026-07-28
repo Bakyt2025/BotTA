@@ -91,6 +91,12 @@
             "hasGPS": false
         },
         {
+            "name": "Аруузат (Майлу суу)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арча (улица Чехова, 2/9) ( )",
             "code": "000000039",
             "coords": "",
