@@ -475,6 +475,12 @@
             "hasGPS": false
         },
         {
+            "name": "Ормон ата (Тайгара)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "рм айбек",
             "code": "000000087",
             "coords": "",
