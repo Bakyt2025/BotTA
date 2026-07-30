@@ -7489,6 +7489,12 @@
             "hasGPS": false
         },
         {
+            "name": "Кун туу сонун (...)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Кун туу эл бакай (Центр)",
             "code": "NEW",
             "coords": "0,0",
