@@ -529,6 +529,12 @@
             "hasGPS": false
         },
         {
+            "name": "Медер трасса (Трасса)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Медина (БК)",
             "code": "NEW",
             "coords": "0,0",
