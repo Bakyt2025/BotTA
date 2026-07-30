@@ -163,6 +163,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзуу (БК)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Аруузат (Майлу суу) ( )",
             "code": "000000081",
             "coords": "",
