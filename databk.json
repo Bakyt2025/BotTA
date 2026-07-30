@@ -181,6 +181,12 @@
             "hasGPS": false
         },
         {
+            "name": "Асия (Базар коргон рынок)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Асман (Масы) ( )",
             "code": "000000071",
             "coords": "",
