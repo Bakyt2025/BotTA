@@ -2191,6 +2191,12 @@
             "hasGPS": false
         },
         {
+            "name": "Алар_ча (Центр)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Алдик база (Ленинское) ( )",
             "code": "000001140",
             "coords": "",
