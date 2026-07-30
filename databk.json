@@ -679,6 +679,12 @@
             "hasGPS": false
         },
         {
+            "name": "Умар (БК)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Умид (Бк)",
             "code": "NEW",
             "coords": "0,0",
