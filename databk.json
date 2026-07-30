@@ -91,6 +91,12 @@
             "hasGPS": true
         },
         {
+            "name": "Алина (Бешик жоон)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Алма (КА) ( )",
             "code": "000000073",
             "coords": "",
