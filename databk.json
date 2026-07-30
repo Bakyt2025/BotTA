@@ -655,6 +655,12 @@
             "hasGPS": false
         },
         {
+            "name": "Умид (Бк)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Фатима (Бк)",
             "code": "NEW",
             "coords": "0,0",
