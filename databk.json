@@ -193,6 +193,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арууке (Береке рынок двойняшки)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арууке (Береке)",
             "code": "NEW",
             "coords": "0,0",
