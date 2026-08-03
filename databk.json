@@ -769,6 +769,12 @@
             "hasGPS": false
         },
         {
+            "name": "Уланбек (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Умар (БК) ( )",
             "code": "000000137",
             "coords": "",
