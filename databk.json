@@ -97,6 +97,12 @@
             "hasGPS": false
         },
         {
+            "name": "Али 2 (Береке рынок)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Али заправка (Бешик жоон) ( )",
             "code": "000000128",
             "coords": "",
