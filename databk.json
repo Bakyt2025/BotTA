@@ -811,6 +811,12 @@
             "hasGPS": false
         },
         {
+            "name": "Эльдар (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Эмир (Береке рынок)",
             "code": "NEW",
             "coords": "40.926021,72.995911",
