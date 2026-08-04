@@ -769,6 +769,12 @@
             "hasGPS": false
         },
         {
+            "name": "Тажибай Ата (Блага)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Талас Ата (Майлу суу) ( )",
             "code": "000000082",
             "coords": "",
