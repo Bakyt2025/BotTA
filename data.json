@@ -16571,6 +16571,12 @@
             "code": "000000002",
             "coords": "",
             "hasGPS": false
+        },
+        {
+            "name": "📊 Отчет (Канат)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
         }
     ],
     "products": [
