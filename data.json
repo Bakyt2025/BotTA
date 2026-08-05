@@ -15907,6 +15907,12 @@
             "hasGPS": false
         },
         {
+            "name": "Элдик (АК жол 2)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Элдик (Ак жол 3/298а) ( )",
             "code": "000001591",
             "coords": "",
