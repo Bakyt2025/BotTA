@@ -205,6 +205,12 @@
             "hasGPS": false
         },
         {
+            "name": "Ариель 4 (Берек)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Аруузат (Майлу суу) ( )",
             "code": "000000081",
             "coords": "",
