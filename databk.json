@@ -289,6 +289,12 @@
             "hasGPS": false
         },
         {
+            "name": "Байэл мост жакта (Бк)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Барсбек (БК) ( )",
             "code": "000000138",
             "coords": "",
