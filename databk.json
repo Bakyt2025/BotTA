@@ -199,6 +199,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзан + (Советская)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арзуу (БК) ( )",
             "code": "000000135",
             "coords": "",
