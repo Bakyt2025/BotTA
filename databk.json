@@ -205,6 +205,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзуубек (Советская)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ариель 4 (Берек) ( )",
             "code": "000000176",
             "coords": "",
