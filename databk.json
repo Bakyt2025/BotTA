@@ -685,6 +685,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мухаммед (Блага)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "мухаммед св",
             "code": "000000089",
             "coords": "",
