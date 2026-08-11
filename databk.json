@@ -271,6 +271,12 @@
             "hasGPS": false
         },
         {
+            "name": "Ашым (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Бай азык (Блага) ( )",
             "code": "000000103",
             "coords": "",
