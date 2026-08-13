@@ -4045,6 +4045,12 @@
             "hasGPS": false
         },
         {
+            "name": "Аяна (Месароша 28 а)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Аяна (Месороша 28а) ( )",
             "code": "000000951",
             "coords": "",
