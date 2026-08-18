@@ -967,6 +967,12 @@
             "hasGPS": false
         },
         {
+            "name": "Сумая (Береке рядом Артур друг)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "сыймык майсал",
             "code": "000000167",
             "coords": "",
