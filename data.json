@@ -18011,12 +18011,12 @@
         {
             "name": "Вода \"Pamir\" 0,5 л.",
             "price": 22.0,
-            "stock": 3804
+            "stock": 3792
         },
         {
             "name": "Вода \"Pamir\" 1,0 л.",
             "price": 28.0,
-            "stock": 5965
+            "stock": 5956
         },
         {
             "name": "КHABIB Мохито 0,45л",
@@ -18286,22 +18286,22 @@
         {
             "name": "Сокосодержащий напиток \" Cantaloupe juice\" 0,5",
             "price": 60.0,
-            "stock": 143
+            "stock": 134
         },
         {
             "name": "Сокосодержащий напиток \"Blackcurrant juice\" черная смородина 0,5 л",
             "price": 50.0,
-            "stock": 255
+            "stock": 249
         },
         {
             "name": "Сокосодержащий напиток \"Melon juice\" дыня 0,5 л",
             "price": 50.0,
-            "stock": 1281
+            "stock": 1273
         },
         {
             "name": "Сокосодержащий напиток \"Pomegranate juice\" гранат",
             "price": 50.0,
-            "stock": 1366
+            "stock": 1359
         },
         {
             "name": "Суп лапша с луком в чашке 100 гр.",
