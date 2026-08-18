@@ -619,6 +619,12 @@
             "hasGPS": false
         },
         {
+            "name": "Кара дарыя 2 (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Караван (Береке)",
             "code": "NEW",
             "coords": "0,0",
