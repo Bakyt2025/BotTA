@@ -829,6 +829,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мухаммед (Граница бургонду)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "мухаммед св",
             "code": "000000089",
             "coords": "",
