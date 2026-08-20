@@ -1105,6 +1105,12 @@
             "hasGPS": false
         },
         {
+            "name": "Шермат Ата (Бургонду)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ынтымак (Бк) ( )",
             "code": "000000170",
             "coords": "",
