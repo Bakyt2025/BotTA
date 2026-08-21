@@ -697,6 +697,12 @@
             "hasGPS": true
         },
         {
+            "name": "Кудиратил ажы (Сузак)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Кумуш (Советская) ( )",
             "code": "000000160",
             "coords": "",
