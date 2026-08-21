@@ -535,6 +535,12 @@
             "hasGPS": false
         },
         {
+            "name": "Дыйкан Ата (Сузак)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "дюшес",
             "code": "000000051",
             "coords": "41.03429,72.739635",
