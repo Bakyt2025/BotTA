@@ -865,6 +865,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мундуз (Трасса БК)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Мурас (Бургонду) ( )",
             "code": "000000023",
             "coords": "0,0",
