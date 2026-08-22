@@ -313,6 +313,12 @@
             "hasGPS": false
         },
         {
+            "name": "Аслиддин (БК)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Асман (Масы) ( )",
             "code": "000000071",
             "coords": "",
