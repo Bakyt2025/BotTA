@@ -685,6 +685,12 @@
             "hasGPS": false
         },
         {
+            "name": "Карзинка (БК)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Келечек (Блага) ( )",
             "code": "000000163",
             "coords": "",
