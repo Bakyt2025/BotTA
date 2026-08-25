@@ -1213,6 +1213,12 @@
             "hasGPS": false
         },
         {
+            "name": "Ынтымак кафе (Ынтымак)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ырыс (Береке) ( )",
             "code": "000000094",
             "coords": "",
