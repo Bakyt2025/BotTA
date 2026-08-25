@@ -43,9 +43,9 @@
             "hasGPS": false
         },
         {
-            "name": "Адинбай ажы (Орто Азия)",
-            "code": "NEW",
-            "coords": "0,0",
+            "name": "Адинбай ажы (Орто Азия) ( )",
+            "code": "000000229",
+            "coords": "",
             "hasGPS": false
         },
         {
@@ -259,9 +259,9 @@
             "hasGPS": false
         },
         {
-            "name": "Арзан+ (Орто Азия)",
-            "code": "NEW",
-            "coords": "0,0",
+            "name": "Арзан+ (Орто Азия) ( )",
+            "code": "000000228",
+            "coords": "",
             "hasGPS": false
         },
         {
@@ -595,9 +595,9 @@
             "hasGPS": false
         },
         {
-            "name": "Жумабай Ата (Ынтымак)",
-            "code": "NEW",
-            "coords": "0,0",
+            "name": "Жумабай Ата (Ынтымак) ( )",
+            "code": "000000231",
+            "coords": "",
             "hasGPS": false
         },
         {
@@ -997,9 +997,9 @@
             "hasGPS": false
         },
         {
-            "name": "Оомат (Тайгара)",
-            "code": "NEW",
-            "coords": "0,0",
+            "name": "Оомат (Тайгара) ( )",
+            "code": "000000232",
+            "coords": "",
             "hasGPS": false
         },
         {
@@ -1225,9 +1225,9 @@
             "hasGPS": false
         },
         {
-            "name": "Ынтымак кафе (Ынтымак)",
-            "code": "NEW",
-            "coords": "0,0",
+            "name": "Ынтымак кафе (Ынтымак) ( )",
+            "code": "000000230",
+            "coords": "",
             "hasGPS": false
         },
         {
