@@ -43,6 +43,12 @@
             "hasGPS": false
         },
         {
+            "name": "Адинбай ажы (Орто Азия)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Азамат (Адилет базар) ( )",
             "code": "000000035",
             "coords": "",
