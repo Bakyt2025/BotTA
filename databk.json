@@ -103,6 +103,12 @@
             "hasGPS": false
         },
         {
+            "name": "Айкыз (Чехова)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Айсара (Бургонду бутик) ( )",
             "code": "000000219",
             "coords": "",
