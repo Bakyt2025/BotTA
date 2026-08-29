@@ -937,6 +937,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мухиддин (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Нари (Адилет базар) ( )",
             "code": "000000037",
             "coords": "",
