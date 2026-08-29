@@ -913,6 +913,12 @@
             "hasGPS": false
         },
         {
+            "name": "Муслим (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Мухаммед (Блага) ( )",
             "code": "000000184",
             "coords": "",
