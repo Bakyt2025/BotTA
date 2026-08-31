@@ -13183,6 +13183,12 @@
             "hasGPS": false
         },
         {
+            "name": "Нурлан (Токмок 1мкр 2 дом)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Нурлан База",
             "code": "000003166",
             "coords": "",
