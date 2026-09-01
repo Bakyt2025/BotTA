@@ -1,6 +1,12 @@
 {
     "clients": [
         {
+            "name": "/start (/ start, 0700867039)",
+            "code": "NEW",
+            "coords": "43.118766,74.491175",
+            "hasGPS": true
+        },
+        {
             "name": "05kg (Ул. Фрунзе 184 )",
             "code": "000000709",
             "coords": "",
