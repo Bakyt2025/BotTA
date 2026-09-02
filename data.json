@@ -19903,17 +19903,17 @@
         {
             "name": "Сокосодержащий напиток \" Cantaloupe juice\" 0,5",
             "price": 60.0,
-            "stock": 82
+            "stock": 77
         },
         {
             "name": "Сокосодержащий напиток \"Blackcurrant juice\" черная смородина 0,5 л",
             "price": 50.0,
-            "stock": 21
+            "stock": 16
         },
         {
             "name": "Сокосодержащий напиток \"Melon juice\" дыня 0,5 л",
             "price": 50.0,
-            "stock": 840
+            "stock": 835
         },
         {
             "name": "Сокосодержащий напиток \"Pomegranate juice\" гранат",
