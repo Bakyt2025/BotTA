@@ -199,6 +199,12 @@
             "hasGPS": false
         },
         {
+            "name": "Алина (улица Барпы-Cейил, 284В)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Алма (КА) ( )",
             "code": "000000073",
             "coords": "",
