@@ -403,6 +403,12 @@
             "hasGPS": false
         },
         {
+            "name": "Candy shop (улица Гоголя, 109а, +996709785294)",
+            "code": "NEW",
+            "coords": "42.873561,74.622963",
+            "hasGPS": true
+        },
+        {
             "name": "Fresh маркет (Жибек жолу 376 )",
             "code": "000000091",
             "coords": "",
