@@ -20207,6 +20207,12 @@
             "code": "000002772",
             "coords": "",
             "hasGPS": false
+        },
+        {
+            "name": "📊 Отчет (📊 Отчет)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
         }
     ],
     "products": [
