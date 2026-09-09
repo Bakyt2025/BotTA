@@ -511,6 +511,12 @@
             "hasGPS": false
         },
         {
+            "name": "Береке (Бк)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Береке (Жени жок) ( )",
             "code": "000000200",
             "coords": "",
