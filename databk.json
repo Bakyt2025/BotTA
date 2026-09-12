@@ -643,6 +643,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мурассс (Бургондубек)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Муслим (Береке) ( )",
             "code": "000000240",
             "coords": "",
