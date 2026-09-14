@@ -1,6 +1,12 @@
 {
     "clients": [
         {
+            "name": ", (,)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "/start (/ start, 0700867039) ( )",
             "code": "000003267",
             "coords": "",
