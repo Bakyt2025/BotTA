@@ -25,6 +25,12 @@
             "hasGPS": true
         },
         {
+            "name": "Азамат (Адилет)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Азиз (Береке) ( )",
             "code": "000000097",
             "coords": "",
