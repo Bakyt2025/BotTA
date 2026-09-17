@@ -481,6 +481,12 @@
             "hasGPS": false
         },
         {
+            "name": "Нургазы (Адилет)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Нуржамал (Чехова 123) ( )",
             "code": "000000159",
             "coords": "",
