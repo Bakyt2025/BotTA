@@ -16819,6 +16819,12 @@
             "hasGPS": false
         },
         {
+            "name": "Серега (Село ленинское)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Серега база ( )",
             "code": "000000089",
             "coords": "",
