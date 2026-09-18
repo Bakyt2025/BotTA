@@ -673,6 +673,12 @@
             "hasGPS": false
         },
         {
+            "name": "Умар (Кызыл ай)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Фатима (Бк) ( )",
             "code": "000000131",
             "coords": "",
