@@ -163,6 +163,12 @@
             "hasGPS": false
         },
         {
+            "name": "Аслиддин (Бк)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "аты жок",
             "code": "000000294",
             "coords": "",
