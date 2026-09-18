@@ -739,6 +739,12 @@
             "hasGPS": false
         },
         {
+            "name": "Юрта (Совет)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Юсуф (Береке) ( )",
             "code": "000000280",
             "coords": "",
