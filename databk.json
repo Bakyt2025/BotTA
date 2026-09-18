@@ -361,6 +361,12 @@
             "hasGPS": true
         },
         {
+            "name": "Кумуш (Советский)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "кун азык ка круговой",
             "code": "000000256",
             "coords": "",
