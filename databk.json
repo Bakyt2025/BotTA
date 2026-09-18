@@ -139,6 +139,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзан плюс (Советский)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Арзан+ (Орто Азия) ( )",
             "code": "000000228",
             "coords": "",
