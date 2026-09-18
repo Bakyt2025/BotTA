@@ -151,6 +151,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арзуу (Бк)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "арзуубекк",
             "code": "000000209",
             "coords": "",
