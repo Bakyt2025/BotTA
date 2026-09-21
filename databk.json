@@ -571,6 +571,12 @@
             "hasGPS": false
         },
         {
+            "name": "Самат (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "самса кананын жаны",
             "code": "000000088",
             "coords": "0,0",
