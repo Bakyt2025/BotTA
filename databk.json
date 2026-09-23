@@ -475,6 +475,12 @@
             "hasGPS": false
         },
         {
+            "name": "Магнит (Масы)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "майк арз",
             "code": "000000066",
             "coords": "0,0",
