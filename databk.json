@@ -319,6 +319,12 @@
             "hasGPS": false
         },
         {
+            "name": "Достук (Бургонду)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Достук (Тайгара, 0771075749)",
             "code": "NEW",
             "coords": "0,0",
