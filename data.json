@@ -877,6 +877,12 @@
             "hasGPS": false
         },
         {
+            "name": "Адик (Милянфан)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Адико (ул.Циолковского 86а )",
             "code": "000000369",
             "coords": "",
