@@ -127,6 +127,12 @@
             "hasGPS": true
         },
         {
+            "name": "Алтын балык (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "альансор БК",
             "code": "000000278",
             "coords": "",
