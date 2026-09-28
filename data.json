@@ -421,6 +421,12 @@
             "hasGPS": true
         },
         {
+            "name": "AgMarket (Алтын Ордо 7-я 101)",
+            "code": "NEW",
+            "coords": "42.852296,74.668923",
+            "hasGPS": true
+        },
+        {
             "name": "Alibaba (Сельская 5 )",
             "code": "000000158",
             "coords": "",
