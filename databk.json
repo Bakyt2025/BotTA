@@ -175,6 +175,12 @@
             "hasGPS": false
         },
         {
+            "name": "Арууке (Береке, 0221562626)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Аслиддин (Бк) ( )",
             "code": "000000306",
             "coords": "",
