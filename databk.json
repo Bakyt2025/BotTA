@@ -649,6 +649,12 @@
             "hasGPS": false
         },
         {
+            "name": "Оомат (Береке)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Ормон ата (Тайгара) ( )",
             "code": "000000109",
             "coords": "",
