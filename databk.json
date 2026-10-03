@@ -913,6 +913,12 @@
             "hasGPS": false
         },
         {
+            "name": "Эл азык (Масы)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Эл азык масы (Масы) ( )",
             "code": "000000027",
             "coords": "0,0",
