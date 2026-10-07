@@ -601,6 +601,12 @@
             "hasGPS": false
         },
         {
+            "name": "Кыпчак ордо (Тайгара)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Кыргызстан (Береке) ( )",
             "code": "000000059",
             "coords": "",
