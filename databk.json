@@ -1033,6 +1033,12 @@
             "hasGPS": false
         },
         {
+            "name": "Усон (Базар коргон рынок)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Фатима (Бк) ( )",
             "code": "000000131",
             "coords": "",
