@@ -637,6 +637,12 @@
             "hasGPS": false
         },
         {
+            "name": "Мадина эже (Адилет рядом байэл)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "майк арз",
             "code": "000000066",
             "coords": "0,0",
