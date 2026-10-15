@@ -19229,6 +19229,12 @@
             "code": "000000003",
             "coords": "",
             "hasGPS": false
+        },
+        {
+            "name": "📊 Отчет (📊 Отчет)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
         }
     ],
     "products": [
