@@ -343,6 +343,12 @@
             "hasGPS": false
         },
         {
+            "name": "Барпы маркет (Барпы)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Барсбек (Бк) ( )",
             "code": "000000308",
             "coords": "",
