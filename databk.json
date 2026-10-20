@@ -151,6 +151,12 @@
             "hasGPS": true
         },
         {
+            "name": "Алина (Барпы)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Алма (КА) ( )",
             "code": "000000073",
             "coords": "",
