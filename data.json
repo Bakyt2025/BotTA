@@ -445,6 +445,12 @@
             "hasGPS": false
         },
         {
+            "name": "Level mag (Кийизбаевой 31)",
+            "code": "NEW",
+            "coords": "0,0",
+            "hasGPS": false
+        },
+        {
             "name": "Manav Istanbul (Верхний джал 3:4) (ИНН:11311199100309)",
             "code": "000001760",
             "coords": "",
